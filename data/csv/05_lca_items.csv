@@ -1,0 +1,13 @@
+item_id,item_code,item_name,item_type,default_unit,assumptions,impact_assessment_method,iso_compliant,notes,active
+1,MAT-AL6082,Aluminium alloy 6082 billet,material,kg,European average supply mix,SIMULATED method,true,,true
+2,MAT-ALSI10MG,Aluminium casting alloy AlSi10Mg,material,kg,Secondary-heavy supply mix,SIMULATED method,true,,true
+3,MAT-PP-VIRGIN,Polypropylene (virgin),material,kg,,SIMULATED method,true,,true
+4,MAT-PP-RECYC,Polypropylene (recyclate),material,kg,Post-industrial recyclate,SIMULATED method,true,,true
+5,MAT-COOLANT,Cutting fluid,material,kg,,SIMULATED method,true,,true
+6,MAT-CARDBOARD,Cardboard packaging,material,kg,,SIMULATED method,true,,true
+7,MAT-RELEASE,Die release agent,material,kg,,SIMULATED method,true,Factor still draft (unapproved) in this sample,true
+8,PRC-CNC-MILL,CNC milling - non-electric inputs,process,min,Tooling and consumables per machine-minute,SIMULATED method,true,Electricity is calculated from machine power,true
+9,PRC-HPDC,High-pressure die casting - non-electric inputs,process,kg,Melting fuel,SIMULATED method,true,,true
+10,PRC-INJ-MOULD,Injection moulding - non-electric inputs,process,kg,Ancillaries,SIMULATED method,true,,true
+11,PRC-DEBURR,Deburring and washing - non-electric inputs,process,item,,SIMULATED method,true,,true
+12,EOL-AL-RECYCLE,Aluminium recycling at end of life (net credit),end_of_life,kg,Net of avoided primary production,SIMULATED method,true,Negative factor = credit,true

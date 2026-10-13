@@ -1,0 +1,13 @@
+factor_id,item_id,impact_category_id,factor_value,factor_unit,basis_unit,valid_from,valid_to,data_quality,source_method,approved,created_at
+1,1,1,8.2,kg CO2e / kg,kg,2024-01-01,,Good,Supplier EPD,true,2025-01-08T10:00:00+00:00
+2,2,1,7.4,kg CO2e / kg,kg,2024-01-01,,Fair,Database lookup,true,2025-01-08T10:00:00+00:00
+3,3,1,1.95,kg CO2e / kg,kg,2024-01-01,,Good,Database lookup,true,2025-01-08T10:00:00+00:00
+4,4,1,0.75,kg CO2e / kg,kg,2024-01-01,,Fair,Database lookup,true,2025-01-08T10:00:00+00:00
+5,5,1,1.1,kg CO2e / kg,kg,2024-01-01,,Fair,Database lookup,true,2025-01-08T10:00:00+00:00
+6,6,1,0.9,kg CO2e / kg,kg,2024-01-01,,Fair,Database lookup,true,2025-01-08T10:00:00+00:00
+7,7,1,2.3,kg CO2e / kg,kg,2024-01-01,,Poor,Estimate - awaiting review,false,2025-01-08T10:00:00+00:00
+8,8,1,0.012,kg CO2e / min,min,2024-01-01,,Fair,Internal measurement,true,2025-01-08T10:00:00+00:00
+9,9,1,0.55,kg CO2e / kg,kg,2024-01-01,,Fair,Internal measurement,true,2025-01-08T10:00:00+00:00
+10,10,1,0.05,kg CO2e / kg,kg,2024-01-01,,Fair,Internal measurement,true,2025-01-08T10:00:00+00:00
+11,11,1,0.02,kg CO2e / item,item,2024-01-01,,Fair,Internal measurement,true,2025-01-08T10:00:00+00:00
+12,12,1,-1.5,kg CO2e / kg,kg,2024-01-01,,Fair,Database lookup,true,2025-01-08T10:00:00+00:00

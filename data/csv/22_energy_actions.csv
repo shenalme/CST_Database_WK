@@ -1,0 +1,3 @@
+action_id,recommendation_id,action_description,owner_name,due_date,status,validation_outcome
+1,1,SIMULATED: Trial batched tool changes on the next BRK-001 batch,SIMULATED Process Engineer,2025-04-30,in_progress,
+2,2,SIMULATED: Quality sign-off on reduced heater set-points,SIMULATED Quality Lead,2025-05-15,open,

@@ -1,0 +1,4 @@
+equipment_factor_id,equipment_id,impact_category_id,factor_value,factor_unit,basis_unit,source_id,approved
+1,1,1,0.35,kg CO2e / h,h,4,true
+2,2,1,1.8,kg CO2e / h,h,4,true
+3,3,1,0.5,kg CO2e / h,h,4,true

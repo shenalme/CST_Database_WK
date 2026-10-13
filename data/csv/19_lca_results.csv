@@ -1,0 +1,7 @@
+result_id,scenario_id,batch_id,result_type,impact_category_id,lifecycle_stage_id,result_value,unit,calculation_version,calculated_at
+1,1,,design,1,1,15.318926,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00
+2,1,,design,1,4,-0.675000,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00
+3,2,,design,1,1,4.950025,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00
+4,2,,design,1,4,-0.675000,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00
+5,3,,design,1,1,0.720464,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00
+6,4,,design,1,1,0.601701,kg CO2e,v1.0-SIMULATED,2025-03-01T12:00:00+00:00

@@ -1,0 +1,15 @@
+bom_item_id,scenario_id,item_id,stage_id,net_quantity,unit,waste_percentage,sequence_no,notes
+1,1,1,1,0.45,kg,75,1,Machined from billet - 75% of input becomes chips
+2,1,5,1,0.02,kg,0,2,
+3,1,6,1,0.05,kg,5,3,Packaging
+4,1,12,4,0.45,kg,0,4,Recycling at end of life
+5,2,2,1,0.45,kg,20,1,Casting runners and flash
+6,2,5,1,0.005,kg,0,2,
+7,2,7,1,0.003,kg,0,3,Release agent - factor not yet approved
+8,2,6,1,0.05,kg,5,4,Packaging
+9,2,12,4,0.45,kg,0,5,Recycling at end of life
+10,3,3,1,0.32,kg,3,1,
+11,3,6,1,0.04,kg,5,2,Packaging
+12,4,3,1,0.224,kg,3,1,70% virgin
+13,4,4,1,0.096,kg,3,2,30% recyclate
+14,4,6,1,0.04,kg,5,3,Packaging

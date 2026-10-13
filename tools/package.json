@@ -1,0 +1,8 @@
+{
+  "name": "lca-database-tools",
+  "private": true,
+  "type": "module",
+  "description": "Checks the SQL on an in-memory PostgreSQL and regenerates the sample-data files. Optional - not needed to use the database.",
+  "scripts": { "build": "node build.mjs", "validate": "node validate.mjs" },
+  "dependencies": { "@electric-sql/pglite": "0.3.14", "csv-parse": "5.6.0" }
+}
