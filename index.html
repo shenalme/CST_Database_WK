@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCA Results Dashboard</title>
+<meta name="description" content="Design-baseline carbon footprint and expected-versus-measured energy for manufacturing scenarios.">
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #fff; --ink: #1b2330; --muted: #5a6575; --line: #dde1e8;
+    --c-mat: #3b73b9; --c-proc: #e08a1e; --c-elec: #1f9e89; --c-eol: #8a63b8;
+    --good: #1a7f4b; --bad: #b3261e; --warn-bg: #fff4dc; --warn-ink: #7a4b00; --track: #eef0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11151c; --surface: #181e28; --ink: #e9edf3; --muted: #9ba6b8; --line: #2b3342;
+      --c-mat: #6aa0e6; --c-proc: #f0a540; --c-elec: #3fc7ae; --c-eol: #b393e0;
+      --good: #4cc98a; --bad: #ff8a80; --warn-bg: #33290f; --warn-ink: #f0b457; --track: #232b39; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 48px; }
+  header { padding: 24px 0 8px; }
+  h1 { margin: 0; font-size: 1.55rem; line-height: 1.2; }
+  .status { margin: 6px 0 0; color: var(--muted); font-size: .9rem; }
+  .status b { color: var(--ink); }
+  h2 { margin: 28px 0 4px; font-size: 1.15rem; }
+  .hint { margin: 0 0 10px; color: var(--muted); font-size: .9rem; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .kpis { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 14px; }
+  .kpi .v { font-size: 1.7rem; font-weight: 700; line-height: 1.15; }
+  .kpi .l { color: var(--muted); font-size: .85rem; }
+  .kpi .d { font-size: .85rem; margin-top: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0 12px; font-size: .88rem; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .group { margin-bottom: 18px; } .group:last-child { margin-bottom: 0; }
+  .group h3 { margin: 0 0 8px; font-size: .95rem; color: var(--muted); font-weight: 600; }
+  .bar { margin: 0 0 12px; }
+  .bar .name { display: flex; justify-content: space-between; gap: 12px; font-size: .92rem; margin-bottom: 3px; }
+  .bar .name span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .track { position: relative; height: 24px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .seg { position: absolute; top: 0; bottom: 0; }
+  .zero { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: .55; z-index: 2; }
+  .delta { font-weight: 600; } .delta.down { color: var(--good); } .delta.up { color: var(--bad); }
+  .pair { margin: 0 0 14px; }
+  .pair .name { font-size: .92rem; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .row { display: grid; grid-template-columns: 70px 1fr 90px; gap: 8px; align-items: center; font-size: .85rem; margin: 2px 0; }
+  .row .track { height: 14px; } .row .val { text-align: right; font-variant-numeric: tabular-nums; }
+  .exp { background: var(--muted); opacity: .75; } .mea { background: var(--c-mat); }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  .note { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 14px; font-size: .92rem; }
+  .ok { color: var(--good); font-size: .92rem; }
+  footer { margin-top: 28px; color: var(--muted); font-size: .82rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LCA Results Dashboard</h1>
+    <p class="status" id="status">Loading…</p>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Carbon footprint per finished part</h2>
+  <p class="hint">kg CO₂e, design baseline. Scenarios of the same part share one scale. Bars left of the line are credits (e.g. recycling).</p>
+  <div class="card">
+    <div class="legend" id="legend"></div>
+    <div id="chart"></div>
+  </div>
+
+  <h2>Scenario results</h2>
+  <div class="card scroll"><table id="table"></table></div>
+
+  <h2>Expected vs measured energy</h2>
+  <p class="hint">kWh per production batch and operation. Expected comes from the plan; measured is the sum of energy-meter readings.</p>
+  <div class="card" id="energy"></div>
+
+  <h2>Data quality</h2>
+  <div id="quality"></div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script src="config.js"></script>
+<script src="sample-data.js"></script>
+<script>
+const h = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k === 'style') e.setAttribute('style', v); else if (v != null && v !== false) e.setAttribute(k, v); }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+};
+const $ = (id) => document.getElementById(id);
+const f = (n, d = 2) => Number(n).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (n) => (n > 0 ? '+' : n < 0 ? '−' : '') + f(Math.abs(n), 1) + '%';
+const COMPONENTS = [['materials', 'Materials', 'var(--c-mat)'], ['processes', 'Processes', 'var(--c-proc)'], ['electricity', 'Electricity', 'var(--c-elec)'], ['end_of_life', 'End of life', 'var(--c-eol)']];
+
+async function loadData() {
+  const cfg = window.DASHBOARD_CONFIG || {};
+  if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY) {
+    try {
+      const base = cfg.SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/';
+      const get = async (v) => {
+        const r = await fetch(base + v + '?select=*', { headers: { apikey: cfg.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + cfg.SUPABASE_ANON_KEY } });
+        if (!r.ok) throw new Error(v + ': ' + r.status + ' ' + (await r.text()).slice(0, 120));
+        return r.json();
+      };
+      const [totals, missing, energy] = await Promise.all([get('v_scenario_totals'), get('v_bom_missing_factors'), get('v_energy_comparison')]);
+      return { live: true, totals, missing, energy };
+    } catch (e) { return { live: false, error: e.message, ...fromSample() }; }
+  }
+  return { live: false, ...fromSample() };
+}
+const fromSample = () => ({ totals: SAMPLE_DATA.v_scenario_totals, missing: SAMPLE_DATA.v_bom_missing_factors, energy: SAMPLE_DATA.v_energy_comparison });
+
+function render(d) {
+  const totals = d.totals.filter(r => r.impact_code === 'GWP').map(r => ({ ...r, total_impact: +r.total_impact, energy_kwh_per_part: +r.energy_kwh_per_part }))
+    .sort((a, b) => a.part_number.localeCompare(b.part_number) || a.scenario_id - b.scenario_id);
+  const parts = [...new Set(totals.map(r => r.part_number))];
+  const baseline = {}; totals.forEach(r => { baseline[r.part_number] ??= r; });
+  totals.forEach(r => { r.delta = r === baseline[r.part_number] ? null : (r.total_impact / baseline[r.part_number].total_impact - 1) * 100; });
+
+  /* status */
+  const st = $('status');
+  if (d.live) st.replaceChildren(h('b', {}, 'Live data from Supabase'), ' · ' + new Date().toLocaleString('en-GB'));
+  else if (d.error) st.replaceChildren(h('b', {}, 'Could not reach Supabase'), ` (${d.error}). Showing the built-in simulated sample data instead.`);
+  else st.replaceChildren(h('b', {}, 'Simulated sample data'), ' — not company data. Connect Supabase in config.js to show live results.');
+
+  /* KPIs */
+  const best = totals.filter(r => r.delta != null).sort((a, b) => a.delta - b.delta)[0];
+  const meas = d.energy.filter(r => r.measured_kwh != null);
+  const eSum = meas.reduce((s, r) => s + +r.expected_kwh, 0), mSum = meas.reduce((s, r) => s + +r.measured_kwh, 0);
+  const kpi = (v, l, dd) => h('div', { class: 'card kpi' }, h('div', { class: 'v' }, v), h('div', { class: 'l' }, l), dd && h('div', { class: 'd' }, dd));
+  $('kpis').replaceChildren(
+    kpi(totals.length, 'scenarios compared', parts.length + ' part' + (parts.length === 1 ? '' : 's')),
+    best ? kpi(pct(best.delta), 'largest carbon change vs baseline', `${best.scenario_name} (${best.part_number})`) : kpi('—', 'largest carbon change vs baseline'),
+    meas.length ? kpi(pct((mSum / eSum - 1) * 100), 'measured vs expected energy', `${meas.length} metered operation${meas.length === 1 ? '' : 's'}`) : kpi('—', 'measured vs expected energy', 'no meter data yet'),
+    kpi(d.missing.length, 'BOM lines without approved factor', d.missing.length ? 'excluded from totals' : 'all lines covered'));
+
+  /* chart */
+  $('legend').replaceChildren(...COMPONENTS.map(([, label, col]) => h('span', {}, h('i', { style: 'background:' + col }), label)));
+  $('chart').replaceChildren(...parts.map(p => {
+    const rows = totals.filter(r => r.part_number === p);
+    const pos = Math.max(...rows.map(r => COMPONENTS.reduce((s, [k]) => s + Math.max(0, +r[k]), 0)));
+    const neg = Math.max(0, ...rows.map(r => COMPONENTS.reduce((s, [k]) => s + Math.max(0, -r[k]), 0)));
+    const span = pos + neg, zeroAt = neg / span * 100;
+    return h('div', { class: 'group' }, h('h3', {}, p),
+      rows.map(r => {
+        let up = 0, down = 0; const segs = [];
+        for (const [k, label, col] of COMPONENTS) {
+          const v = +r[k]; if (!v) continue;
+          const w = Math.abs(v) / span * 100, left = v > 0 ? zeroAt + up / span * 100 : zeroAt - (down + -v) / span * 100;
+          if (v > 0) up += v; else down += -v;
+          segs.push(h('div', { class: 'seg', style: `left:${left}%;width:${w}%;background:${col}`, title: `${label}: ${f(v, 3)} kg CO₂e` }));
+        }
+        return h('div', { class: 'bar' },
+          h('div', { class: 'name' }, h('span', {}, r.scenario_name + (r.status ? ` (${r.status})` : '')),
+            h('span', {}, f(r.total_impact), ' kg CO₂e ', r.delta != null && h('span', { class: 'delta ' + (r.delta < 0 ? 'down' : 'up') }, pct(r.delta)))),
+          h('div', { class: 'track' }, ...segs, neg > 0 && h('div', { class: 'zero', style: `left:${zeroAt}%` })));
+      }));
+  }));
+
+  /* table */
+  $('table').replaceChildren(
+    h('thead', {}, h('tr', {}, ['Part', 'Scenario', 'Status', 'Total kg CO₂e', 'Materials', 'Processes', 'Electricity', 'End of life', 'Energy kWh/part', 'vs baseline'].map(x => h('th', {}, x)))),
+    h('tbody', {}, totals.map(r => h('tr', {}, h('td', {}, r.part_number), h('td', {}, r.scenario_name), h('td', {}, r.status || '—'),
+      h('td', {}, h('b', {}, f(r.total_impact))), ...COMPONENTS.map(([k]) => h('td', {}, f(r[k]))),
+      h('td', {}, f(r.energy_kwh_per_part, 3)), h('td', {}, r.delta == null ? 'baseline' : pct(r.delta))))));
+
+  /* energy */
+  $('energy').replaceChildren(...(d.energy.length ? d.energy.map(r => {
+    const mx = Math.max(+r.expected_kwh, +(r.measured_kwh ?? 0)) || 1;
+    const line = (cls, label, v) => h('div', { class: 'row' }, h('span', {}, label), h('div', { class: 'track' }, v != null && h('div', { class: 'seg ' + cls, style: `left:0;width:${+v / mx * 100}%` })), h('span', { class: 'val' }, v == null ? 'no meter data' : f(v, 1) + ' kWh'));
+    return h('div', { class: 'pair' },
+      h('div', { class: 'name' }, h('span', {}, `${r.batch_code} · ${r.operation_name} (${r.part_number})`),
+        r.variance_pct != null && h('span', { class: 'delta ' + (r.variance_pct <= 0 ? 'down' : 'up') }, pct(+r.variance_pct) + ' vs expected')),
+      line('exp', 'Expected', r.expected_kwh), line('mea', 'Measured', r.measured_kwh));
+  }) : [h('p', { class: 'hint' }, 'No production batches with energy data yet.')]));
+
+  /* data quality */
+  $('quality').replaceChildren(d.missing.length
+    ? h('div', { class: 'note' }, h('b', {}, d.missing.length + ' BOM line(s) have no approved, in-date factor and are NOT in the totals: '),
+        d.missing.map(m => `${m.scenario_name} — ${m.item_name} (${m.item_code}, ${m.impact_code})`).join('; '))
+    : h('p', { class: 'ok' }, '✓ Every BOM line has an approved factor.'));
+
+  $('foot').textContent = 'Results are calculated in the database from approved, in-date factors only (views v_scenario_totals, v_bom_missing_factors, v_energy_comparison).';
+}
+loadData().then(render);
+</script>
+</body>
+</html>
