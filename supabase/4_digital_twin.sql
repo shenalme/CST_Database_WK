@@ -1,7 +1,7 @@
 -- =====================================================================
 -- 4_digital_twin.sql — floor layout for the digital twin (additive: run after 1, 2 and 3;
 -- nothing already installed changes). Positions are in METRES on a floor plan.
--- The twin page (docs/twin.html) draws these and simulates parts flowing through the
+-- The twin page (twin.html) draws these and simulates parts flowing through the
 -- machines using the route operations, energy and live readings already in the database.
 -- =====================================================================
 create table factory_floors (

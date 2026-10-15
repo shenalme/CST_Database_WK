@@ -1,0 +1,14 @@
+{
+ "_help": "Map a machine_type (oven, autoclave, press, cnc, spray_booth, vacuum_pump, injection, dispenser, cutting, hand_tool, packaging) or an exact machine name to a glTF/GLB file in this folder. Options: rotateX/rotateZ/rotateY in degrees (rotateX -90 for Z-up CAD exports; rotateY turns the machine on the floor), height in metres, credit (shown on the twin page; required for CC BY models). Models are scaled to the machine's footprint. After editing run: cd tools && npm run models",
+ "_example_oven": {
+  "file": "oven.glb",
+  "rotateY": 0,
+  "height": 2.4
+ },
+ "cnc": {
+  "file": "laser_cnc_machine.glb",
+  "rotateX": -90,
+  "rotateY": 0,
+  "credit": "Laser CNC machine by YouniqueIdeaStudio (sketchfab.com/3d-models/laser-cnc-machine-1dce1a6120d24b1e8f4a28146b39e188), CC BY 4.0, simplified for the web"
+ }
+}

@@ -1,196 +1,399 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<title>Composite Product Manufacturing LCA Comparison</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LCA Results Dashboard</title>
-<meta name="description" content="Design-baseline carbon footprint and expected-versus-measured energy for manufacturing scenarios.">
 <style>
-  :root {
-    --bg: #f6f7f9; --surface: #fff; --ink: #1b2330; --muted: #5a6575; --line: #dde1e8;
-    --c-mat: #3b73b9; --c-proc: #e08a1e; --c-elec: #1f9e89; --c-eol: #8a63b8;
-    --good: #1a7f4b; --bad: #b3261e; --warn-bg: #fff4dc; --warn-ink: #7a4b00; --track: #eef0f4;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #11151c; --surface: #181e28; --ink: #e9edf3; --muted: #9ba6b8; --line: #2b3342;
-      --c-mat: #6aa0e6; --c-proc: #f0a540; --c-elec: #3fc7ae; --c-eol: #b393e0;
-      --good: #4cc98a; --bad: #ff8a80; --warn-bg: #33290f; --warn-ink: #f0b457; --track: #232b39; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 48px; }
-  header { padding: 24px 0 8px; }
-  h1 { margin: 0; font-size: 1.55rem; line-height: 1.2; }
-  .status { margin: 6px 0 0; color: var(--muted); font-size: .9rem; }
-  .status b { color: var(--ink); }
-  h2 { margin: 28px 0 4px; font-size: 1.15rem; }
-  .hint { margin: 0 0 10px; color: var(--muted); font-size: .9rem; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-  .kpis { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 14px; }
-  .kpi .v { font-size: 1.7rem; font-weight: 700; line-height: 1.15; }
-  .kpi .l { color: var(--muted); font-size: .85rem; }
-  .kpi .d { font-size: .85rem; margin-top: 2px; }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0 12px; font-size: .88rem; }
-  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-  .group { margin-bottom: 18px; } .group:last-child { margin-bottom: 0; }
-  .group h3 { margin: 0 0 8px; font-size: .95rem; color: var(--muted); font-weight: 600; }
-  .bar { margin: 0 0 12px; }
-  .bar .name { display: flex; justify-content: space-between; gap: 12px; font-size: .92rem; margin-bottom: 3px; }
-  .bar .name span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .track { position: relative; height: 24px; background: var(--track); border-radius: 5px; overflow: hidden; }
-  .seg { position: absolute; top: 0; bottom: 0; }
-  .zero { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: .55; z-index: 2; }
-  .delta { font-weight: 600; } .delta.down { color: var(--good); } .delta.up { color: var(--bad); }
-  .pair { margin: 0 0 14px; }
-  .pair .name { font-size: .92rem; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  .row { display: grid; grid-template-columns: 70px 1fr 90px; gap: 8px; align-items: center; font-size: .85rem; margin: 2px 0; }
-  .row .track { height: 14px; } .row .val { text-align: right; font-variant-numeric: tabular-nums; }
-  .exp { background: var(--muted); opacity: .75; } .mea { background: var(--c-mat); }
-  .scroll { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 640px; }
-  th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
-  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
-  tr:last-child td { border-bottom: 0; }
-  .note { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 14px; font-size: .92rem; }
-  .ok { color: var(--good); font-size: .92rem; }
-  footer { margin-top: 28px; color: var(--muted); font-size: .82rem; }
+:root{--green:#0f766e;--dark:#111827;--bg:#f4f7fb;--line:#e5e7eb;--muted:#6b7280;--blue:#2563eb;--amber:#f59e0b;--red:#dc2626}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#1f2937;line-height:1.45}
+header{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;padding:24px 34px}
+header h1{margin:0 0 8px;font-size:27px}
+header p{margin:0 0 4px;opacity:.95}
+#source{font-size:13px;opacity:.9}
+main{max-width:1320px;margin:auto;padding:26px 32px 60px}
+.card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+h2{color:var(--green);margin:0 0 12px}
+h3{margin:14px 0 8px;color:#374151}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+label{display:block;font-size:13px;font-weight:bold;margin:9px 0 5px}
+input,select,textarea{width:100%;box-sizing:border-box;padding:9px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font:inherit}
+input[readonly]{background:#f3f4f6;color:#374151}
+textarea{min-height:105px}
+button{background:var(--green);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;margin:10px 6px 4px 0;font:inherit;font-weight:bold}
+button.secondary{background:#334155}button.blue{background:var(--blue)}button.red{background:var(--red);padding:5px 9px;margin:0;font-size:12px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+th{background:#ecfdf5;color:#134e4a}
+td.right,th.right{text-align:right}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
+.kpi .num{font-size:24px;color:var(--green);font-weight:bold;margin-top:5px}
+.note{background:#fff7ed;border-left:5px solid var(--amber);padding:12px 14px;border-radius:8px}
+.good{background:#ecfdf5;border-left:5px solid var(--green);padding:12px 14px;border-radius:8px}
+.info{background:#eff6ff;border-left:5px solid var(--blue);padding:12px 14px;border-radius:8px}
+.flow{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.box{background:#ecfdf5;border:1px solid #99f6e4;color:#134e4a;border-radius:10px;padding:10px 12px;font-weight:bold}
+.arrow{font-size:22px;color:var(--green);font-weight:bold}
+.small{font-size:12px}.muted{color:var(--muted)}
+.redtxt{color:#dc2626;font-weight:bold}.greentxt{color:#047857;font-weight:bold}.ambertxt{color:#b45309;font-weight:bold}
+.barbox{height:12px;background:#e5e7eb;border-radius:999px;overflow:hidden;min-width:70px}
+.bar{height:12px;background:#14b8a6;border-radius:999px;width:0%}
+.bar.red{background:#dc2626}.bar.amber{background:#f59e0b}.bar.blue{background:#2563eb}
+.formula{background:#111827;color:#e5e7eb;border-radius:10px;padding:14px;font-size:13px;line-height:1.7;overflow:auto}
+.formula b{color:#5eead4}
+.work{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.55}
+.work td{border:0;border-bottom:1px solid var(--line)}
+.work td:first-child{width:170px;font-family:Arial,Helvetica,sans-serif;color:#134e4a;font-weight:bold}
+@media(max-width:900px){.grid2,.grid4{grid-template-columns:1fr}main{padding:18px 14px 50px}header{padding:20px 16px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>LCA Results Dashboard</h1>
-    <p class="status" id="status">Loading…</p>
-  </header>
+<header>
+<h1>Composite Product Manufacturing LCA Comparison</h1>
+<p>Compare manufacturing routes at design level, then compare with live production energy data. Every number is calculated from the database.</p>
+<p id="source">Loading…</p>
 
-  <div class="kpis" id="kpis"></div>
+</header>
 
-  <h2>Carbon footprint per finished part</h2>
-  <p class="hint">kg CO₂e, design baseline. Scenarios of the same part share one scale. Bars left of the line are credits (e.g. recycling).</p>
-  <div class="card">
-    <div class="legend" id="legend"></div>
-    <div id="chart"></div>
-  </div>
+<main>
 
-  <h2>Scenario results</h2>
-  <div class="card scroll"><table id="table"></table></div>
 
-  <h2>Expected vs measured energy</h2>
-  <p class="hint">kWh per production batch and operation. Expected comes from the plan; measured is the sum of energy-meter readings.</p>
-  <div class="card" id="energy"></div>
-
-  <h2>Data quality</h2>
-  <div id="quality"></div>
-
-  <footer id="foot"></footer>
+<section class="card">
+<h2>1. Software logic</h2>
+<div class="flow">
+  <div class="box">Project + Part</div><div class="arrow">→</div>
+  <div class="box">BOM + Layup</div><div class="arrow">→</div>
+  <div class="box">Manufacturing Route</div><div class="arrow">→</div>
+  <div class="box">Assembly + Finishing</div><div class="arrow">→</div>
+  <div class="box">Design LCA Report</div><div class="arrow">→</div>
+  <div class="box">Live kWh Comparison</div><div class="arrow">→</div>
+  <div class="box">AI Improvement Prompt</div>
 </div>
+</section>
+
+<section class="card">
+<h2>2. Project and part information</h2>
+<div class="grid4">
+  <div><label>Project</label><input id="project" readonly></div>
+  <div><label>Part number</label><select id="partSel" onchange="loadPart()"></select></div>
+  <div><label>Part description</label><input id="partDesc" readonly></div>
+  <div><label>Functional unit</label><input id="functionalUnit" readonly></div>
+</div>
+<div class="grid4">
+  <div><label>Length (mm)</label><input id="length" type="number" oninput="calculateAll()"></div>
+  <div><label>Width (mm)</label><input id="width" type="number" oninput="calculateAll()"></div>
+  <div><label>Thickness (mm)</label><input id="thickness" type="number" step="0.1" oninput="calculateAll()"></div>
+  <div><label>Electricity factor kg CO₂e/kWh</label><input id="gridFactor" type="number" step="0.00001" oninput="calculateAll()"></div>
+</div>
+<div class="grid4">
+  <div class="kpi">Plan area<div class="num"><span id="area">0</span> m²</div></div>
+  <div class="kpi">Volume<div class="num"><span id="volume">0</span> m³</div></div>
+  <div class="kpi">BOM mass (incl. waste)<div class="num"><span id="bomMassKpi">0</span> kg</div></div>
+  <div class="kpi">Selected route<div class="num" id="selectedRouteKpi" style="font-size:18px">-</div></div>
+</div>
+<p class="small muted">Dimensions and the electricity factor start from the database; changing them here is a what-if and is not saved.</p>
+</section>
+
+<section class="card">
+<h2>3. BOM and layup definition</h2>
+<p class="small">The bill of materials of the selected scenario, from the database. "Load example BOM" restores the scenario's BOM; add or remove items to try a what-if.</p>
+<div class="grid4">
+  <div><label>Material</label><select id="material"></select></div>
+  <div><label>Stage</label><select id="matStage"><option>Final laminate</option><option>Assembly</option><option>Consumable</option><option>Finishing</option><option>Packaging</option></select></div>
+  <div><label>Mass used (kg)</label><input id="matMass" type="number" value="1" step="0.001"></div>
+  <div><label>Waste %</label><input id="matWaste" type="number" value="5" step="0.1"></div>
+</div>
+<button onclick="addBom()">Add BOM item</button>
+<button class="secondary" onclick="resetBom()">Load example BOM</button>
+<div class="scroll"><table id="bomTable"></table></div>
+<h3>Layup schedule</h3>
+<div class="scroll"><table id="layupTable"></table></div>
+</section>
+
+<section class="card">
+<h2>4. Manufacturing route comparison</h2>
+<p>Choose a route (scenario) to work on. The table below compares all routes with each route's own database BOM.</p>
+<div class="grid4">
+  <div><label>Manufacturing route</label><select id="route" onchange="loadRoute()"></select></div>
+  <div><label>Expected scrap %</label><input id="routeScrap" type="number" step="0.1" oninput="calculateAll()"></div>
+  <div><label>Quantity</label><input id="qty" type="number" step="1" oninput="calculateAll()"></div>
+  <div><label>Live variance alert %</label><input id="threshold" type="number" step="1" oninput="calculateAll()"></div>
+</div>
+<p class="small muted">Expected scrap % and quantity are stored with the scenario, as in the mock-up; totals are per finished part and do not use them.</p>
+<h3>Operations of the selected route</h3>
+<div class="scroll"><table id="routeTable"></table></div>
+<h3>All routes side by side (kg CO₂e per finished part)</h3>
+<div class="scroll"><table id="allRoutes"></table></div>
+</section>
+
+<section class="card">
+<h2>5. Stage 1 design baseline LCA</h2>
+<div class="grid4">
+  <div class="kpi">BOM / materials<div class="num"><span id="bomCf">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Manufacturing<div class="num"><span id="mfgCf">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Assembly + finishing<div class="num"><span id="assFinishCf">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Total design LCA<div class="num"><span id="designTotal">0</span></div><span class="small">kg CO₂e</span></div>
+</div>
+<div class="grid4" style="margin-top:12px">
+  <div class="kpi">Energy demand (materials + electricity)<div class="num"><span id="designCed">0</span></div><span class="small">MJ</span></div>
+  <div class="kpi">Planned electricity<div class="num"><span id="designKwh">0</span></div><span class="small">kWh per part</span></div>
+  <div class="kpi" style="grid-column:span 2">Database result for this route<div class="num" style="font-size:20px"><span id="dbTotal">-</span></div><span class="small" id="dbCheck"></span></div>
+</div>
+<div class="note" style="margin-top:12px"><b>Stage 1 output:</b> a design-level LCA before live production data exists. The calculation steps are shown in section 9.</div>
+</section>
+
+<section class="card">
+<h2>6. Stage 2 live production energy data</h2>
+<p>Energy-meter kWh per operation. If an operation has no reading, the design baseline is used and flagged as missing live data.</p>
+<div class="grid4">
+  <div><label>Operation</label><select id="liveOperation"></select></div>
+  <div><label>Sensor / meter ID</label><input id="sensorId" value="MTR-001"></div>
+  <div><label>Actual sensor kWh</label><input id="actualKwh" type="number" value="2.5" step="0.01"></div>
+  <div><label>Machine state</label><select id="machineState"><option>running</option><option>idle</option><option>standby</option><option>fault</option></select></div>
+</div>
+<button onclick="addLiveReading()">Add live reading</button>
+<button class="secondary" onclick="loadExampleLiveData()">Load example live data</button>
+<button class="secondary" onclick="clearLive()">Clear readings</button>
+<div class="scroll"><table id="liveTable"></table></div>
+</section>
+
+<section class="card">
+<h2>7. Design vs live comparison</h2>
+<div class="scroll"><table id="comparisonTable"></table></div>
+<div class="grid4" style="margin-top:12px">
+  <div class="kpi">Design total<div class="num"><span id="designTotal2">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Live total<div class="num"><span id="liveTotal">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Variance<div class="num"><span id="varianceCf">0</span></div><span class="small">kg CO₂e</span></div>
+  <div class="kpi">Extra kWh<div class="num"><span id="extraKwh">0</span></div><span class="small">kWh</span></div>
+</div>
+</section>
+
+<section class="grid2">
+<div class="card">
+<h2>8. AI improvement prompt</h2>
+<button class="blue" onclick="generatePrompt()">Generate prompt</button>
+<textarea id="aiPrompt"></textarea>
+</div>
+<div class="card">
+<h2>Example recommendations</h2>
+<button onclick="generateRecommendations()">Generate recommendations</button>
+<div id="recommendations" class="info">Load readings, then generate recommendations.</div>
+</div>
+</section>
+
+<section class="card">
+<h2>9. Calculations</h2>
+<div class="formula">
+<b>Material</b>&nbsp; consumed kg = mass × (1 + waste % ÷ 100) &nbsp;→&nbsp; kg CO₂e = consumed × factor per kg &nbsp;|&nbsp; MJ = consumed × MJ per kg<br>
+<b>Operation energy</b>&nbsp; kWh = hours × kW × utilisation ÷ parts per cycle<br>
+<b>Operation carbon</b>&nbsp; kg CO₂e = kWh × electricity factor + process mass (kg) × process factor (kg CO₂e per kg)<br>
+<b>Operation energy demand</b>&nbsp; MJ = kWh × 3.6<br>
+<b>Design total</b>&nbsp; = materials + manufacturing operations + assembly &amp; finishing operations<br>
+<b>Live</b>&nbsp; kWh = sum of meter readings for the operation (design kWh if none) &nbsp;→&nbsp; variance % = (live − design) ÷ design × 100 &nbsp;→&nbsp; High above the alert %, Watch above half of it<br>
+<b>Live total</b>&nbsp; = materials + Σ (live kWh × electricity factor + process carbon)
+</div>
+<h3>Working for the selected route (updates with every change above)</h3>
+<div class="scroll"><table class="work" id="working"></table></div>
+</section>
+
+</main>
 
 <script src="config.js"></script>
 <script src="sample-data.js"></script>
+<script src="calc.js"></script>
 <script>
+const C = window.LCA_CALC;
+const id = (x) => document.getElementById(x);
+const n = (x) => parseFloat(id(x).value) || 0;
+const f = (x, d = 3) => C.fmt(x, d);
 const h = (tag, attrs = {}, ...kids) => {
   const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k === 'style') e.setAttribute('style', v); else if (v != null && v !== false) e.setAttribute(k, v); }
+  for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k === 'style') e.setAttribute('style', v); else if (k.startsWith('on')) e[k] = v; else if (v != null && v !== false) e.setAttribute(k, v); }
   for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
   return e;
 };
-const $ = (id) => document.getElementById(id);
-const f = (n, d = 2) => Number(n).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
-const pct = (n) => (n > 0 ? '+' : n < 0 ? '−' : '') + f(Math.abs(n), 1) + '%';
-const COMPONENTS = [['materials', 'Materials', 'var(--c-mat)'], ['processes', 'Processes', 'var(--c-proc)'], ['electricity', 'Electricity', 'var(--c-elec)'], ['end_of_life', 'End of life', 'var(--c-eol)']];
+const th = (cols) => h('thead', {}, h('tr', {}, cols.map((c) => h('th', { class: c.endsWith('*') ? 'right' : '' }, c.replace('*', '')))));
+const td = (v, right) => h('td', { class: right ? 'right' : '' }, v);
+
+let D = null;          // data from Supabase or the built-in sample
+let scenario = null;   // selected route / scenario
+let bom = [];          // working BOM
+let live = [];         // working live readings
+let lastCalc = null;
+
+/* ---------- data ---------- */
+const VIEWS = ['v_dash_parts', 'v_dash_materials', 'v_dash_scenarios', 'v_dash_bom', 'v_dash_layup', 'v_dash_operations', 'v_dash_live', 'v_dash_ai_template', 'v_dash_recommendation_actions', 'v_scenario_summary'];
+const TEXT_KEYS = /(code|name|number|label|text|type|stage|status|state|unit|description|route|applies_to|fabric|machine)/;
+const norm = (rows) => rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v !== null && v !== '' && !TEXT_KEYS.test(k) && Number.isFinite(Number(v)) ? Number(v) : v])));
 
 async function loadData() {
   const cfg = window.DASHBOARD_CONFIG || {};
+  let info = 'Simulated sample data (built in). Connect Supabase in config.js to show live database results.', raw;
   if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY) {
     try {
       const base = cfg.SUPABASE_URL.replace(/\/+$/, '') + '/rest/v1/';
-      const get = async (v) => {
-        const r = await fetch(base + v + '?select=*', { headers: { apikey: cfg.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + cfg.SUPABASE_ANON_KEY } });
-        if (!r.ok) throw new Error(v + ': ' + r.status + ' ' + (await r.text()).slice(0, 120));
+      const res = await Promise.all(VIEWS.map(async (v) => {
+        const r = await fetch(base + v + '?select=*', { headers: { apikey: cfg.SUPABASE_ANON_KEY, ...(String(cfg.SUPABASE_ANON_KEY).startsWith('eyJ') ? { Authorization: 'Bearer ' + cfg.SUPABASE_ANON_KEY } : {}) } });
+        if (!r.ok) throw new Error(v + ': ' + r.status);
         return r.json();
-      };
-      const [totals, missing, energy] = await Promise.all([get('v_scenario_totals'), get('v_bom_missing_factors'), get('v_energy_comparison')]);
-      return { live: true, totals, missing, energy };
-    } catch (e) { return { live: false, error: e.message, ...fromSample() }; }
-  }
-  return { live: false, ...fromSample() };
-}
-const fromSample = () => ({ totals: SAMPLE_DATA.v_scenario_totals, missing: SAMPLE_DATA.v_bom_missing_factors, energy: SAMPLE_DATA.v_energy_comparison });
-
-function render(d) {
-  const totals = d.totals.filter(r => r.impact_code === 'GWP').map(r => ({ ...r, total_impact: +r.total_impact, energy_kwh_per_part: +r.energy_kwh_per_part }))
-    .sort((a, b) => a.part_number.localeCompare(b.part_number) || a.scenario_id - b.scenario_id);
-  const parts = [...new Set(totals.map(r => r.part_number))];
-  const baseline = {}; totals.forEach(r => { baseline[r.part_number] ??= r; });
-  totals.forEach(r => { r.delta = r === baseline[r.part_number] ? null : (r.total_impact / baseline[r.part_number].total_impact - 1) * 100; });
-
-  /* status */
-  const st = $('status');
-  if (d.live) st.replaceChildren(h('b', {}, 'Live data from Supabase'), ' · ' + new Date().toLocaleString('en-GB'));
-  else if (d.error) st.replaceChildren(h('b', {}, 'Could not reach Supabase'), ` (${d.error}). Showing the built-in simulated sample data instead.`);
-  else st.replaceChildren(h('b', {}, 'Simulated sample data'), ' — not company data. Connect Supabase in config.js to show live results.');
-
-  /* KPIs */
-  const best = totals.filter(r => r.delta != null).sort((a, b) => a.delta - b.delta)[0];
-  const meas = d.energy.filter(r => r.measured_kwh != null);
-  const eSum = meas.reduce((s, r) => s + +r.expected_kwh, 0), mSum = meas.reduce((s, r) => s + +r.measured_kwh, 0);
-  const kpi = (v, l, dd) => h('div', { class: 'card kpi' }, h('div', { class: 'v' }, v), h('div', { class: 'l' }, l), dd && h('div', { class: 'd' }, dd));
-  $('kpis').replaceChildren(
-    kpi(totals.length, 'scenarios compared', parts.length + ' part' + (parts.length === 1 ? '' : 's')),
-    best ? kpi(pct(best.delta), 'largest carbon change vs baseline', `${best.scenario_name} (${best.part_number})`) : kpi('—', 'largest carbon change vs baseline'),
-    meas.length ? kpi(pct((mSum / eSum - 1) * 100), 'measured vs expected energy', `${meas.length} metered operation${meas.length === 1 ? '' : 's'}`) : kpi('—', 'measured vs expected energy', 'no meter data yet'),
-    kpi(d.missing.length, 'BOM lines without approved factor', d.missing.length ? 'excluded from totals' : 'all lines covered'));
-
-  /* chart */
-  $('legend').replaceChildren(...COMPONENTS.map(([, label, col]) => h('span', {}, h('i', { style: 'background:' + col }), label)));
-  $('chart').replaceChildren(...parts.map(p => {
-    const rows = totals.filter(r => r.part_number === p);
-    const pos = Math.max(...rows.map(r => COMPONENTS.reduce((s, [k]) => s + Math.max(0, +r[k]), 0)));
-    const neg = Math.max(0, ...rows.map(r => COMPONENTS.reduce((s, [k]) => s + Math.max(0, -r[k]), 0)));
-    const span = pos + neg, zeroAt = neg / span * 100;
-    return h('div', { class: 'group' }, h('h3', {}, p),
-      rows.map(r => {
-        let up = 0, down = 0; const segs = [];
-        for (const [k, label, col] of COMPONENTS) {
-          const v = +r[k]; if (!v) continue;
-          const w = Math.abs(v) / span * 100, left = v > 0 ? zeroAt + up / span * 100 : zeroAt - (down + -v) / span * 100;
-          if (v > 0) up += v; else down += -v;
-          segs.push(h('div', { class: 'seg', style: `left:${left}%;width:${w}%;background:${col}`, title: `${label}: ${f(v, 3)} kg CO₂e` }));
-        }
-        return h('div', { class: 'bar' },
-          h('div', { class: 'name' }, h('span', {}, r.scenario_name + (r.status ? ` (${r.status})` : '')),
-            h('span', {}, f(r.total_impact), ' kg CO₂e ', r.delta != null && h('span', { class: 'delta ' + (r.delta < 0 ? 'down' : 'up') }, pct(r.delta)))),
-          h('div', { class: 'track' }, ...segs, neg > 0 && h('div', { class: 'zero', style: `left:${zeroAt}%` })));
       }));
-  }));
-
-  /* table */
-  $('table').replaceChildren(
-    h('thead', {}, h('tr', {}, ['Part', 'Scenario', 'Status', 'Total kg CO₂e', 'Materials', 'Processes', 'Electricity', 'End of life', 'Energy kWh/part', 'vs baseline'].map(x => h('th', {}, x)))),
-    h('tbody', {}, totals.map(r => h('tr', {}, h('td', {}, r.part_number), h('td', {}, r.scenario_name), h('td', {}, r.status || '—'),
-      h('td', {}, h('b', {}, f(r.total_impact))), ...COMPONENTS.map(([k]) => h('td', {}, f(r[k]))),
-      h('td', {}, f(r.energy_kwh_per_part, 3)), h('td', {}, r.delta == null ? 'baseline' : pct(r.delta))))));
-
-  /* energy */
-  $('energy').replaceChildren(...(d.energy.length ? d.energy.map(r => {
-    const mx = Math.max(+r.expected_kwh, +(r.measured_kwh ?? 0)) || 1;
-    const line = (cls, label, v) => h('div', { class: 'row' }, h('span', {}, label), h('div', { class: 'track' }, v != null && h('div', { class: 'seg ' + cls, style: `left:0;width:${+v / mx * 100}%` })), h('span', { class: 'val' }, v == null ? 'no meter data' : f(v, 1) + ' kWh'));
-    return h('div', { class: 'pair' },
-      h('div', { class: 'name' }, h('span', {}, `${r.batch_code} · ${r.operation_name} (${r.part_number})`),
-        r.variance_pct != null && h('span', { class: 'delta ' + (r.variance_pct <= 0 ? 'down' : 'up') }, pct(+r.variance_pct) + ' vs expected')),
-      line('exp', 'Expected', r.expected_kwh), line('mea', 'Measured', r.measured_kwh));
-  }) : [h('p', { class: 'hint' }, 'No production batches with energy data yet.')]));
-
-  /* data quality */
-  $('quality').replaceChildren(d.missing.length
-    ? h('div', { class: 'note' }, h('b', {}, d.missing.length + ' BOM line(s) have no approved, in-date factor and are NOT in the totals: '),
-        d.missing.map(m => `${m.scenario_name} — ${m.item_name} (${m.item_code}, ${m.impact_code})`).join('; '))
-    : h('p', { class: 'ok' }, '✓ Every BOM line has an approved factor.'));
-
-  $('foot').textContent = 'Results are calculated in the database from approved, in-date factors only (views v_scenario_totals, v_bom_missing_factors, v_energy_comparison).';
+      raw = Object.fromEntries(VIEWS.map((v, i) => [v, res[i]]));
+      info = 'Live data from Supabase · ' + new Date().toLocaleString('en-GB');
+    } catch (e) { info = 'Could not reach Supabase (' + e.message + ') - showing the built-in simulated sample data.'; }
+  }
+  raw = raw || window.SAMPLE_DATA;
+  D = Object.fromEntries(VIEWS.map((v) => [v, norm(raw[v] || [])]));
+  id('source').textContent = info;
 }
-loadData().then(render);
+
+/* ---------- setup ---------- */
+function fillSelect(el, rows, valueKey, textKey) {
+  id(el).replaceChildren(...rows.map((r) => h('option', { value: r[valueKey] }, r[textKey])));
+}
+function init() {
+  fillSelect('partSel', D.v_dash_parts, 'part_id', 'part_number');
+  fillSelect('material', D.v_dash_materials, 'material_code', 'material_name');
+  loadPart();
+}
+function loadPart() {
+  const p = D.v_dash_parts.find((x) => x.part_id == id('partSel').value) || D.v_dash_parts[0];
+  id('project').value = p.project_name; id('partDesc').value = p.part_description || ''; id('functionalUnit').value = p.functional_unit || '';
+  id('length').value = p.length_mm; id('width').value = p.width_mm; id('thickness').value = p.thickness_mm;
+  fillSelect('route', D.v_dash_scenarios.filter((s) => s.part_id == p.part_id), 'scenario_id', 'scenario_name');
+  loadRoute();
+}
+const opsOf = (sid) => D.v_dash_operations.filter((o) => o.scenario_id == sid).sort((a, b) => a.op_no - b.op_no);
+const bomOf = (sid) => D.v_dash_bom.filter((b) => b.scenario_id == sid).sort((a, b) => a.sequence_no - b.sequence_no).map((b) => ({ ...b }));
+function loadRoute() {
+  scenario = D.v_dash_scenarios.find((s) => s.scenario_id == id('route').value);
+  id('gridFactor').value = scenario.electricity_factor;
+  id('routeScrap').value = scenario.expected_scrap_percent; id('qty').value = scenario.quantity; id('threshold').value = scenario.alert_threshold_percent;
+  id('selectedRouteKpi').textContent = scenario.scenario_name;
+  bom = bomOf(scenario.scenario_id);
+  live = D.v_dash_live.filter((r) => r.scenario_id == scenario.scenario_id).map((r) => ({ ...r }));
+  fillSelect('liveOperation', opsOf(scenario.scenario_id).map((o) => ({ ...o, label: `${o.op_no}: ${o.stage} - ${o.process_name} - ${o.machine_name || ''}` })), 'operation_id', 'label');
+  renderBom(); renderLayup(); renderLive(); calculateAll();
+}
+
+/* ---------- BOM and layup ---------- */
+function addBom() {
+  const m = D.v_dash_materials.find((x) => x.material_code === id('material').value);
+  bom.push({ stage: id('matStage').value, material_name: m.material_name, mass_kg: n('matMass'), waste_percent: n('matWaste'), cf_per_kg: m.cf_per_kg, ced_per_kg: m.ced_per_kg });
+  renderBom(); calculateAll();
+}
+function resetBom() { bom = bomOf(scenario.scenario_id); renderBom(); calculateAll(); }
+function renderBom() {
+  id('bomTable').replaceChildren(th(['Stage', 'Material', 'Mass kg*', 'Waste %*', 'Consumed kg*', 'kg CO₂e*', 'MJ*', 'Action']),
+    h('tbody', {}, bom.map((b, i) => { const r = C.bomLine(b);
+      return h('tr', {}, td(b.stage), td(b.material_name), td(f(b.mass_kg), 1), td(f(b.waste_percent, 1), 1), td(f(r.consumed), 1), td(f(r.kgco2e), 1), td(f(r.mj, 2), 1),
+        h('td', {}, h('button', { class: 'red', onclick: () => { bom.splice(i, 1); renderBom(); calculateAll(); } }, 'Remove'))); })));
+}
+function renderLayup() {
+  const rows = D.v_dash_layup.filter((l) => l.scenario_id == scenario.scenario_id).sort((a, b) => a.layer_no - b.layer_no);
+  id('layupTable').replaceChildren(th(['Layer*', 'Material', 'Fabric type', 'Plies*', 'Orientation °*', 'Resin ratio %*', 'Scrap %*']),
+    h('tbody', {}, rows.length ? rows.map((l) => h('tr', {}, td(l.layer_no, 1), td(l.material_name || ''), td(l.fabric_type || ''), td(l.ply_count, 1), td(l.orientation_deg, 1), td(l.resin_ratio_percent, 1), td(l.scrap_percent, 1)))
+      : [h('tr', {}, h('td', { colspan: 7 }, 'No layup defined for this scenario.'))]));
+}
+
+/* ---------- route ---------- */
+function renderRoute() {
+  const g = n('gridFactor');
+  id('routeTable').replaceChildren(th(['ID', 'Stage', 'Process', 'Machine', 'Hours*', 'kW*', 'Util.*', 'Expected kWh*', 'Process kg CO₂e/kg*', 'Design kg CO₂e*']),
+    h('tbody', {}, opsOf(scenario.scenario_id).map((o) => { const d = C.opDesign(o, g);
+      return h('tr', {}, td(o.op_no), td(o.stage), td(o.process_name), td(o.machine_name || ''), td(f(o.hours, 2), 1), td(f(o.kw, 2), 1), td(f(o.utilisation, 2), 1), td(f(d.kwh), 1), td(f(o.process_cf_per_kg), 1), td(f(d.kgco2e), 1)); })));
+}
+function renderAllRoutes() {
+  const g = n('gridFactor'), thr = n('threshold');
+  const rows = D.v_dash_scenarios.filter((s) => s.part_id == scenario.part_id).map((s) => ({ s, c: C.calculateRoute({ bom: bomOf(s.scenario_id), ops: opsOf(s.scenario_id), readings: [], gridFactor: g, thresholdPct: thr }) }));
+  const lowest = Math.min(...rows.map((r) => r.c.designTotal));
+  id('allRoutes').replaceChildren(th(['Route', 'Materials*', 'Manufacturing*', 'Assembly + finishing*', 'Total kg CO₂e*', 'vs lowest*', 'Energy MJ*', 'Electricity kWh*']),
+    h('tbody', {}, rows.map(({ s, c }) => h('tr', { style: s.scenario_id == scenario.scenario_id ? 'background:#f0fdfa' : '' },
+      td(s.scenario_name + (s.scenario_id == scenario.scenario_id ? '  ◀ selected' : '')), td(f(c.bomCf), 1), td(f(c.mfgCf), 1), td(f(c.assFinishCf), 1), td(h('b', {}, f(c.designTotal)), 1),
+      td(c.designTotal === lowest ? 'lowest' : '+' + f(c.designTotal - lowest, 2) + ' (' + f((c.designTotal / lowest - 1) * 100, 1) + '%)', 1), td(f(c.designCed, 1), 1), td(f(c.designKwh, 2), 1)))));
+}
+
+/* ---------- live ---------- */
+function addLiveReading() {
+  live.push({ operation_id: parseInt(id('liveOperation').value), sensor_code: id('sensorId').value, kwh: n('actualKwh'), machine_state: id('machineState').value });
+  renderLive(); calculateAll();
+}
+// same behaviour as the database function load_example_live_data(): recorded readings if there are any, else design kWh + 15 %
+function loadExampleLiveData() {
+  live = D.v_dash_live.filter((r) => r.scenario_id == scenario.scenario_id).map((r) => ({ ...r }));
+  if (!live.length) opsOf(scenario.scenario_id).forEach((o) => live.push({ operation_id: o.operation_id, sensor_code: 'MTR-' + o.op_no, kwh: C.opDesign(o, 0).kwh * 1.15, machine_state: 'running' }));
+  renderLive(); calculateAll();
+}
+function renderLive() {
+  id('liveTable').replaceChildren(th(['Operation ID', 'Sensor', 'Actual kWh*', 'Machine state', 'Action']),
+    h('tbody', {}, live.length ? live.map((r, i) => { const op = opsOf(scenario.scenario_id).find((o) => o.operation_id === r.operation_id);
+      return h('tr', {}, td(op ? op.op_no : r.operation_id), td(r.sensor_code), td(f(r.kwh), 1), td(r.machine_state || ''),
+      h('td', {}, h('button', { class: 'red', onclick: () => { live.splice(i, 1); renderLive(); calculateAll(); } }, 'Remove'))); }) : [h('tr', {}, h('td', { colspan: 5 }, 'No readings for this scenario.'))]));
+}
+
+/* ---------- calculation + render ---------- */
+function calculateAll() {
+  if (!scenario) return;
+  const g = n('gridFactor');
+  const area = (n('length') / 1000) * (n('width') / 1000);
+  id('area').textContent = f(area, 3); id('volume').textContent = f(area * n('thickness') / 1000, 5);
+  renderRoute(); renderAllRoutes();
+  const c = lastCalc = C.calculateRoute({ bom, ops: opsOf(scenario.scenario_id), readings: live, gridFactor: g, thresholdPct: n('threshold') });
+  const set = (k, v, d = 3) => { id(k).textContent = f(v, d); };
+  set('bomMassKpi', c.bomMass); set('bomCf', c.bomCf); set('mfgCf', c.mfgCf); set('assFinishCf', c.assFinishCf);
+  set('designTotal', c.designTotal); set('designTotal2', c.designTotal); set('designCed', c.designCed, 1); set('designKwh', c.designKwh);
+  set('liveTotal', c.liveTotal); set('varianceCf', c.varianceCf); set('extraKwh', c.extraKwh);
+
+  const db = D.v_scenario_summary.find((t) => t.scenario_id == scenario.scenario_id);
+  if (db) {
+    id('dbTotal').textContent = f(db.design_total_kgco2e) + ' kg CO₂e';
+    const same = Math.abs(db.design_total_kgco2e - c.designTotal) < 1e-6;
+    id('dbCheck').textContent = same ? '✓ matches the calculation on this page' : 'differs because the BOM or electricity factor was changed on this page (what-if)';
+  } else { id('dbTotal').textContent = '-'; id('dbCheck').textContent = ''; }
+
+  id('comparisonTable').replaceChildren(
+    th(['ID', 'Stage', 'Process', 'Machine', 'Design kWh*', 'Live kWh*', 'Variance kWh*', 'Variance %*', 'Status', 'Design kg CO₂e*', 'Live kg CO₂e*', 'Visual']),
+    h('tbody', {}, c.opRows.map((o) => {
+      const status = { ok: h('span', { class: 'greentxt' }, 'OK'), no_live: h('span', { class: 'ambertxt' }, 'No live data: baseline used'), high: h('span', { class: 'redtxt' }, 'High energy'), watch: h('span', { class: 'ambertxt' }, 'Watch') }[o.status];
+      const cls = o.status === 'high' ? 'red' : (o.status === 'watch' || o.status === 'no_live') ? 'amber' : '';
+      return h('tr', {}, td(o.op_no), td(o.stage), td(o.process_name), td(o.machine_name || ''), td(f(o.design.kwh), 1), td(f(o.liveKwh), 1), td(f(o.variance), 1), td(f(o.pct, 1) + '%', 1),
+        td(status), td(f(o.design.kgco2e), 1), td(f(o.liveCf), 1), td(h('div', { class: 'barbox' }, h('div', { class: 'bar ' + cls, style: `width:${Math.min(100, Math.abs(o.pct))}%` }))));
+    })));
+
+  const groups = [];
+  C.workings(c, g).forEach((l) => { let grp = groups.find((x) => x.name === l.group); if (!grp) groups.push(grp = { name: l.group, lines: [] }); grp.lines.push(l.text); });
+  id('working').replaceChildren(h('tbody', {}, groups.flatMap((gr) => gr.lines.map((t, i) => h('tr', {}, h('td', {}, i === 0 ? gr.name : ''), h('td', {}, t))))));
+}
+
+/* ---------- AI prompt + recommendations: wording comes from the database tables ---------- */
+const FALLBACK_TEMPLATE = { role_text: 'You are an energy optimisation and composite manufacturing LCA assistant.', task_text: 'Analyse this composite product LCA comparison.',
+  questions_text: '1. Executive summary.\n2. Best and worst manufacturing route observations.\n3. Main energy and carbon hotspots.\n4. Processes where live energy is higher than design baseline.\n5. Likely causes of high energy use.\n6. Quick-win actions that do not affect product quality.\n7. Engineering changes requiring validation.\n8. Sensor/data quality issues.\n9. Prioritised action plan with owner, timescale, risk and estimated kWh / kg CO2e saving.',
+  constraints_text: '- Do not recommend changing cure time, cure temperature, vacuum hold, pressure or material specification unless validated by engineering qualification.\n- Keep BOM/material LCA separate from live energy variance unless actual material consumption also changes.\n- Protect product quality, traceability and safety.' };
+function comparisonData() {
+  return lastCalc.opRows.map((o) => ({ id: o.op_no, stage: o.stage, process: o.process_name, machine: o.machine_name,
+    design_kwh: +f(o.design.kwh), live_kwh: +f(o.liveKwh), variance_kwh: +f(o.variance), variance_percent: +f(o.pct, 1),
+    design_kgco2e: +f(o.design.kgco2e), live_kgco2e: +f(o.liveCf), has_live_reading: o.hasLive }));
+}
+function generatePrompt() {
+  const c = lastCalc, t = D.v_dash_ai_template[0] || FALLBACK_TEMPLATE;
+  const context = { project: id('project').value, part_number: id('partSel').selectedOptions[0].textContent, part_description: id('partDesc').value, functional_unit: id('functionalUnit').value,
+    selected_route: scenario.scenario_name, electricity_factor_kgco2e_per_kwh: n('gridFactor'), design_total_kgco2e: +f(c.designTotal), live_total_kgco2e: +f(c.liveTotal),
+    variance_kgco2e: +f(c.varianceCf), extra_kwh: +f(c.extraKwh), operation_comparison: comparisonData() };
+  id('aiPrompt').value = `${t.role_text}\n\n${t.task_text}\n\nContext:\n${JSON.stringify(context, null, 2)}\n\nPlease provide:\n${t.questions_text}\n\nConstraints:\n${t.constraints_text}`;
+}
+function generateRecommendations() {
+  const rows = comparisonData().filter((r) => r.has_live_reading).sort((a, b) => b.variance_kwh - a.variance_kwh);
+  const high = rows.filter((r) => r.variance_percent > n('threshold'));
+  const box = id('recommendations'); box.className = 'info';
+  const kids = [];
+  if (high.length) kids.push(h('div', { class: 'note' }, h('b', {}, 'High energy variance detected:'), h('ul', {}, high.map((r) => h('li', {}, `${r.machine} / ${r.process}: +${f(r.variance_kwh)} kWh, ${f(r.variance_percent, 1)}% above design.`)))));
+  else kids.push(h('div', { class: 'good' }, h('b', {}, rows.length ? 'No major high-energy variance above threshold.' : 'No live readings loaded yet.')));
+  kids.push(h('h3', {}, 'Suggested actions'), h('ol', {}, D.v_dash_recommendation_actions.sort((a, b) => a.sort_order - b.sort_order).map((a) => h('li', {}, a.action_text))));
+  box.replaceChildren(...kids);
+}
+
+loadData().then(init);
 </script>
 </body>
 </html>

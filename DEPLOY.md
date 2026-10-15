@@ -68,11 +68,11 @@ The first lists the four routes. The second answers `permission denied for table
 2. Name it, for example `lca-factory-twin`. Choose **Public** (GitHub Pages is free for public repositories; private ones need a paid plan). Click **Create repository**.
 
 **2. Upload the project**
-1. Unzip `lca-database.zip` on your computer.
+1. Unzip `lca-github-site.zip` on your computer.
 2. On the empty repository page click **uploading an existing file**.
-3. Drag in **everything inside the unzipped folder** (the folders `docs`, `supabase`, `data`, `tools` and the files `README.md`, `DEPLOY.md`, …). Keep the folders as they are. **Do not** upload a `node_modules` folder.
+3. Drag in **everything inside the unzipped folder**: `index.html`, `twin.html`, `project.html`, the other `.js` files, and the folders `assets`, `models` and `supabase`. Keep the folders as they are. The website files sit directly in the repository (not inside a `docs` folder), so `index.html` is at the top level.
 4. Scroll down and click **Commit changes**.
-   (About 70 files: under GitHub's limit of 100 per upload. If GitHub complains, upload `docs` first, then the rest.)
+   (About 30 files: well under GitHub's limit of 100 per upload.)
 
 *Prefer the command line?* From inside the unzipped folder:
 ```bash
@@ -83,7 +83,7 @@ git push -u origin main
 ```
 
 **3. Connect the website to your database**
-1. In the repository open `docs/config.js` → click the **pencil icon** (edit).
+1. In the repository open `config.js` → click the **pencil icon** (edit).
 2. Paste your two values between the quotes:
    ```js
    window.DASHBOARD_CONFIG = {
@@ -96,7 +96,7 @@ git push -u origin main
 **4. Switch on GitHub Pages**
 1. Repository **Settings → Pages**.
 2. Under **Build and deployment**, **Source**: **Deploy from a branch**.
-3. **Branch**: `main`, folder: **`/docs`** → **Save**.
+3. **Branch**: `main`, folder: **`/ (root)`** → **Save**.
 4. Wait 1 to 2 minutes and refresh the page. A banner shows your address: `https://<your-user>.github.io/<repository>/`.
 
 **5. Open and check**
@@ -112,8 +112,8 @@ In Supabase SQL Editor run `update lca_scenarios set electricity_factor = 0.1 wh
 ## Changing things later
 - **Edit a page or setting:** open the file in GitHub → pencil → **Commit changes**. The site updates in about a minute (press Ctrl+Shift+R to bypass the cache).
 - **Change the data:** edit the tables in Supabase (Table Editor or SQL). No GitHub change is needed.
-- **Make the project page the home page:** in `docs`, rename `index.html` to `dashboard.html` and `project.html` to `index.html`, then in `docs/project-config.js` set `dashboardUrl: "dashboard.html"`.
-- **Replace the example data with real data:** read the next section first.
+- **Make the project page the home page:** rename `index.html` to `dashboard.html` and `project.html` to `index.html` (GitHub: open the file → pencil → change the name at the top → commit), then in `project-config.js` set `dashboardUrl: "dashboard.html"`.
+- **Replace the example data with real data:** read the next section first, then run `supabase/clear_sample_data.sql` and load your data. The example data came from `supabase/3_sample_data.sql`; you do not need any CSV files for the website.
 
 ## Security: what the public can see
 - The website is public and `config.js` shows the Supabase URL and public key, so **anyone can read the ten dashboard views and three twin views** that file `6` opened. They cannot read your tables, write anything, or see saved prompts.
@@ -123,17 +123,10 @@ In Supabase SQL Editor run `update lca_scenarios set electricity_factor = 0.1 wh
 ## If something does not work
 | Symptom | Likely cause and fix |
 |---|---|
-| Pages address shows 404 | Settings → Pages not saved, folder is not `/docs`, repository is private, or you are inside the 2-minute wait |
+| Pages address shows 404 | Settings → Pages not saved, folder is not `/ (root)`, repository is private, or you are inside the 2-minute wait |
 | Page says "Simulated sample data" / "Built-in sample data" | `config.js` is still empty, or the edit was not committed |
 | "Supabase unreachable: showing sample data" | wrong URL or key (copy again, no spaces or quotes inside), the free project is **paused** (open the Supabase dashboard and click Restore), or file `6` was not run (re-run it) |
 | Dashboard works, twin has no machines | files 4 and 5 were not run, or `6` was run **before** `4` (run `6` again) |
 | Twin shows a message instead of 3D | the browser has no WebGL (try current Chrome, Edge, Firefox or Safari with hardware acceleration) |
 | Old numbers after a change | hard refresh (Ctrl+Shift+R); Supabase data changes show immediately, file edits after about a minute |
 | Free Supabase project stops after a week of no use | Supabase pauses idle free projects: open the dashboard and click **Restore project**; or move to a paid plan for anything the team depends on |
-
-## Rehearse it on your own computer first (optional)
-```bash
-cd tools && npm install
-npm run mock-supabase          # a stand-in for Supabase that answers exactly like the public key would
-```
-In a copy of `docs`, set `config.js` to `SUPABASE_URL: "http://localhost:54321"` and any text as the key, serve it with `cd docs && python3 -m http.server 8000`, and open `http://localhost:8000`. The pages should say "Live data from Supabase". This is how the hosted setup was tested.
