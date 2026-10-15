@@ -1,0 +1,5 @@
+route_id,route_code,route_name,description
+1,vacuum_infusion,Vacuum Infusion Route,
+2,rtm,RTM Route,
+3,compression,Compression Moulding Route,
+4,prepreg_autoclave,Prepreg + Autoclave Route,

@@ -1,221 +1,312 @@
--- AUTO-GENERATED from data/csv/*.csv by tools/build.mjs. SIMULATED SAMPLE DATA ONLY.
+-- AUTO-GENERATED from data/csv/*.csv by tools/build.mjs. SIMULATED / EXAMPLE DATA ONLY.
 -- Run once, after 1_schema.sql and 2_views_and_security.sql.
 begin;
 
--- 01_lifecycle_stages.csv
-insert into lifecycle_stages (stage_id, stage_code, stage_name, sequence_no) values
-  ('1', 'MAN', 'Manufacturing', '1'),
-  ('2', 'USE', 'Use', '2'),
-  ('3', 'MNT', 'Maintenance', '3'),
-  ('4', 'EOL', 'End of life', '4');
+-- 01_projects.csv
+insert into projects (project_id, project_code, project_name, customer_name, status, created_at) values
+  ('1', 'CP-LCA', 'Composite Product LCA', 'SIMULATED Customer', 'active', '2025-01-06T09:30:00+00:00');
 
 
--- 02_impact_categories.csv
-insert into impact_categories (impact_category_id, impact_code, impact_name, unit, description) values
-  ('1', 'GWP', 'Carbon footprint (GWP100)', 'kg CO2e', 'Global warming potential over 100 years');
+-- 02_parts.csv
+insert into parts (part_id, project_id, part_number, part_description, functional_unit, length_mm, width_mm, thickness_mm, notes) values
+  ('1', '1', 'CP-LCA-001', 'Composite structural cover panel', 'One finished composite part', '1000', '500', '3', null);
 
 
--- 03_organisations.csv
-insert into organisations (organisation_id, organisation_name, organisation_code, created_at) values
-  ('1', 'SIMULATED Manufacturing Co', 'SIMCO', '2025-01-06T09:00:00+00:00');
+-- 03_materials.csv
+insert into materials (material_id, material_code, material_name, material_type, cf_kgco2e_per_kg, ced_mj_per_kg, source_note, approved, created_at) values
+  ('1', 'MAT-CARBON-FIBRE', 'Carbon fibre', 'Fibre', '43.87', '998', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('2', 'MAT-EGLASS-FIBRE', 'E-glass fibre', 'Fibre', '1.27', '32', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('3', 'MAT-EPOXY', 'Epoxy resin', 'Resin', '5.7', '130', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('4', 'MAT-VINYLESTER', 'Vinyl ester resin', 'Resin', '4.59', '107.9', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('5', 'MAT-ADHESIVE-1', 'Adhesive 1', 'Adhesive', '6.2', '140', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('6', 'MAT-PEEL-PLY', 'Peel ply', 'Consumable', '3.0', '70', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('7', 'MAT-VAC-BAG', 'Vacuum bagging film', 'Consumable', '2.5', '60', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('8', 'MAT-PAINT-1', 'Paint 1', 'Finishing', '6.0', '115', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00'),
+  ('9', 'MAT-CARDBOARD', 'Cardboard packaging', 'Packaging', '0.9', '12', 'Example value from the team''s dashboard mock-up - to be verified and approved', 'true', '2025-01-08T10:00:00+00:00');
 
 
--- 04_sources.csv
-insert into sources (source_id, source_name, source_type, citation, url, publication_year, database_name, version, notes) values
-  ('1', 'SIMULATED generic LCI database', 'database', 'SIMULATED - not a real database', null, '2024', 'SimLCI', '1.0', 'Placeholder for an inventory database'),
-  ('2', 'SIMULATED supplier EPD (aluminium billet)', 'supplier', 'SIMULATED - not a real EPD', null, '2023', null, null, 'Placeholder supplier declaration'),
-  ('3', 'SIMULATED national grid factor publication', 'standard', 'SIMULATED - not a real publication', null, '2024', null, '2024', 'Placeholder grid emission factor'),
-  ('4', 'SIMULATED internal measurement campaign', 'measurement', 'SIMULATED - not real measurements', null, '2025', null, null, 'Placeholder shop-floor measurements');
+-- 04_machines.csv
+insert into machines (machine_id, machine_name, machine_type, rated_power_kw, notes) values
+  ('1', 'Vacuum pump', 'vacuum_pump', '0.75', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('2', 'PPSS oven', 'oven', '3.2', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('3', 'CNC router', 'cnc', '5.0', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('4', 'Adhesive dispenser', 'dispenser', '0.5', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('5', 'Spray booth', 'spray_booth', '4.0', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('6', 'RTM injection unit', 'injection', '1.5', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('7', 'Hydraulic press', 'press', '10.0', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('8', 'Rivet gun', 'hand_tool', '0.2', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('9', 'Cutting/kitting table', 'cutting', '0.2', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('10', 'Heated press', 'press', '12.0', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('11', 'Sander', 'hand_tool', '0.8', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('12', 'Packaging station', 'packaging', '0', 'SIMULATED - rated power = kW used in the mock-up'),
+  ('13', 'Autoclave', 'autoclave', '25.0', 'SIMULATED - rated power = kW used in the mock-up');
 
 
--- 05_lca_items.csv
-insert into lca_items (item_id, item_code, item_name, item_type, default_unit, assumptions, impact_assessment_method, iso_compliant, notes, active) values
-  ('1', 'MAT-AL6082', 'Aluminium alloy 6082 billet', 'material', 'kg', 'European average supply mix', 'SIMULATED method', 'true', null, 'true'),
-  ('2', 'MAT-ALSI10MG', 'Aluminium casting alloy AlSi10Mg', 'material', 'kg', 'Secondary-heavy supply mix', 'SIMULATED method', 'true', null, 'true'),
-  ('3', 'MAT-PP-VIRGIN', 'Polypropylene (virgin)', 'material', 'kg', null, 'SIMULATED method', 'true', null, 'true'),
-  ('4', 'MAT-PP-RECYC', 'Polypropylene (recyclate)', 'material', 'kg', 'Post-industrial recyclate', 'SIMULATED method', 'true', null, 'true'),
-  ('5', 'MAT-COOLANT', 'Cutting fluid', 'material', 'kg', null, 'SIMULATED method', 'true', null, 'true'),
-  ('6', 'MAT-CARDBOARD', 'Cardboard packaging', 'material', 'kg', null, 'SIMULATED method', 'true', null, 'true'),
-  ('7', 'MAT-RELEASE', 'Die release agent', 'material', 'kg', null, 'SIMULATED method', 'true', 'Factor still draft (unapproved) in this sample', 'true'),
-  ('8', 'PRC-CNC-MILL', 'CNC milling - non-electric inputs', 'process', 'min', 'Tooling and consumables per machine-minute', 'SIMULATED method', 'true', 'Electricity is calculated from machine power', 'true'),
-  ('9', 'PRC-HPDC', 'High-pressure die casting - non-electric inputs', 'process', 'kg', 'Melting fuel', 'SIMULATED method', 'true', null, 'true'),
-  ('10', 'PRC-INJ-MOULD', 'Injection moulding - non-electric inputs', 'process', 'kg', 'Ancillaries', 'SIMULATED method', 'true', null, 'true'),
-  ('11', 'PRC-DEBURR', 'Deburring and washing - non-electric inputs', 'process', 'item', null, 'SIMULATED method', 'true', null, 'true'),
-  ('12', 'EOL-AL-RECYCLE', 'Aluminium recycling at end of life (net credit)', 'end_of_life', 'kg', 'Net of avoided primary production', 'SIMULATED method', 'true', 'Negative factor = credit', 'true');
+-- 05_sensors.csv
+insert into sensors (sensor_code, machine_id, sensor_type, unit, installed_at) values
+  ('MTR-VAC-001', '1', 'energy meter', 'kWh', '2025-02-01T09:00:00+00:00'),
+  ('MTR-OVN-PPSS', '2', 'energy meter', 'kWh', '2025-02-01T09:00:00+00:00'),
+  ('MTR-CNC-001', '3', 'energy meter', 'kWh', '2025-02-01T09:00:00+00:00'),
+  ('MTR-ADH-001', '4', 'energy meter', 'kWh', '2025-02-01T09:00:00+00:00'),
+  ('MTR-SPRAY-001', '5', 'energy meter', 'kWh', '2025-02-01T09:00:00+00:00');
 
 
--- 06_item_sources.csv
-insert into item_sources (item_source_id, item_id, source_id, reference_order, notes) values
-  ('1', '1', '1', '1', null),
-  ('2', '1', '2', '2', 'Supplier EPD cross-check'),
-  ('3', '2', '1', '1', null),
-  ('4', '3', '1', '1', null),
-  ('5', '4', '1', '1', null),
-  ('6', '5', '1', '1', null),
-  ('7', '6', '1', '1', null),
-  ('8', '7', '1', '1', null),
-  ('9', '8', '4', '1', null),
-  ('10', '9', '4', '1', null),
-  ('11', '10', '4', '1', null),
-  ('12', '11', '4', '1', null),
-  ('13', '12', '1', '1', null);
+-- 06_manufacturing_routes.csv
+insert into manufacturing_routes (route_id, route_code, route_name, description) values
+  ('1', 'vacuum_infusion', 'Vacuum Infusion Route', null),
+  ('2', 'rtm', 'RTM Route', null),
+  ('3', 'compression', 'Compression Moulding Route', null),
+  ('4', 'prepreg_autoclave', 'Prepreg + Autoclave Route', null);
 
 
--- 07_lca_factors.csv
-insert into lca_factors (factor_id, item_id, impact_category_id, factor_value, factor_unit, basis_unit, valid_from, valid_to, data_quality, source_method, approved, created_at) values
-  ('1', '1', '1', '8.2', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Good', 'Supplier EPD', 'true', '2025-01-08T10:00:00+00:00'),
-  ('2', '2', '1', '7.4', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00'),
-  ('3', '3', '1', '1.95', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Good', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00'),
-  ('4', '4', '1', '0.75', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00'),
-  ('5', '5', '1', '1.1', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00'),
-  ('6', '6', '1', '0.9', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00'),
-  ('7', '7', '1', '2.3', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Poor', 'Estimate - awaiting review', 'false', '2025-01-08T10:00:00+00:00'),
-  ('8', '8', '1', '0.012', 'kg CO2e / min', 'min', '2024-01-01', null, 'Fair', 'Internal measurement', 'true', '2025-01-08T10:00:00+00:00'),
-  ('9', '9', '1', '0.55', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Internal measurement', 'true', '2025-01-08T10:00:00+00:00'),
-  ('10', '10', '1', '0.05', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Internal measurement', 'true', '2025-01-08T10:00:00+00:00'),
-  ('11', '11', '1', '0.02', 'kg CO2e / item', 'item', '2024-01-01', null, 'Fair', 'Internal measurement', 'true', '2025-01-08T10:00:00+00:00'),
-  ('12', '12', '1', '-1.5', 'kg CO2e / kg', 'kg', '2024-01-01', null, 'Fair', 'Database lookup', 'true', '2025-01-08T10:00:00+00:00');
+-- 07_route_operations.csv
+insert into route_operations (route_operation_id, route_id, op_no, stage, process_name, machine_id, hours, kw, utilisation, process_cf_per_kg, mass_basis_kg, notes) values
+  ('1', '1', '1', 'Manufacturing', 'Vacuum infusion', '1', '2.0', '0.75', '0.8', '1.17', '3.0', null),
+  ('2', '1', '2', 'Manufacturing', 'Oven cure', '2', '2.5', '3.2', '0.62', '0', '0', null),
+  ('3', '1', '3', 'Assembly', 'CNC trimming', '3', '0.4', '5.0', '0.55', '0', '0', null),
+  ('4', '1', '4', 'Assembly', 'Adhesive bonding', '4', '0.2', '0.5', '0.5', '0', '0', null),
+  ('5', '1', '5', 'Finishing', 'Paint application', '5', '0.5', '4.0', '0.75', '0', '0', null),
+  ('6', '2', '1', 'Manufacturing', 'RTM injection', '6', '0.8', '1.5', '0.6', '1.3', '3.0', null),
+  ('7', '2', '2', 'Manufacturing', 'Heated press cure', '7', '1.2', '10.0', '0.65', '0', '0', null),
+  ('8', '2', '3', 'Assembly', 'CNC trimming', '3', '0.3', '5.0', '0.55', '0', '0', null),
+  ('9', '2', '4', 'Assembly', 'Mechanical fastening', '8', '0.2', '0.2', '0.4', '0', '0', null),
+  ('10', '2', '5', 'Finishing', 'Paint application', '5', '0.5', '4.0', '0.75', '0', '0', null),
+  ('11', '3', '1', 'Manufacturing', 'Charge preparation', '9', '0.3', '0.2', '0.5', '0.2', '3.0', null),
+  ('12', '3', '2', 'Manufacturing', 'Compression moulding', '10', '0.8', '12.0', '0.65', '0.95', '3.0', null),
+  ('13', '3', '3', 'Assembly', 'CNC trimming', '3', '0.25', '5.0', '0.55', '0', '0', null),
+  ('14', '3', '4', 'Finishing', 'Surface sanding', '11', '0.25', '0.8', '0.5', '0', '0', null),
+  ('15', '3', '5', 'Finishing', 'Packaging', '12', '0.2', '0', '0', '0', '0', null),
+  ('16', '4', '1', 'Manufacturing', 'Prepreg layup/debulk', '1', '1.0', '0.75', '0.8', '0', '0', null),
+  ('17', '4', '2', 'Manufacturing', 'Autoclave cure', '13', '3.0', '25.0', '0.55', '0', '0', null),
+  ('18', '4', '3', 'Assembly', 'CNC trimming', '3', '0.35', '5.0', '0.55', '0', '0', null),
+  ('19', '4', '4', 'Assembly', 'Adhesive bonding', '4', '0.2', '0.5', '0.5', '0', '0', null),
+  ('20', '4', '5', 'Finishing', 'Paint application', '5', '0.5', '4.0', '0.75', '0', '0', null);
 
 
--- 08_material_properties.csv
-insert into material_properties (material_property_id, item_id, property_name, property_value, unit, source_id, notes) values
-  ('1', '1', 'density', '2700', 'kg/m3', '1', null),
-  ('2', '2', 'density', '2680', 'kg/m3', '1', null),
-  ('3', '3', 'density', '905', 'kg/m3', '1', null),
-  ('4', '4', 'density', '910', 'kg/m3', '1', null);
+-- 08_lca_scenarios.csv
+insert into lca_scenarios (scenario_id, part_id, route_id, scenario_name, electricity_factor, expected_scrap_percent, quantity, alert_threshold_percent, status, created_at) values
+  ('1', '1', '1', 'Vacuum Infusion Route', '0.26155', '5', '1', '15', 'draft', '2025-01-20T10:00:00+00:00'),
+  ('2', '1', '2', 'RTM Route', '0.26155', '5', '1', '15', 'draft', '2025-01-20T10:00:00+00:00'),
+  ('3', '1', '3', 'Compression Moulding Route', '0.26155', '5', '1', '15', 'draft', '2025-01-20T10:00:00+00:00'),
+  ('4', '1', '4', 'Prepreg + Autoclave Route', '0.26155', '5', '1', '15', 'draft', '2025-01-20T10:00:00+00:00');
 
 
--- 09_projects.csv
-insert into projects (project_id, organisation_id, project_code, project_name, customer_name, start_date, end_date, status, created_at) values
-  ('1', '1', 'SIM-P001', 'Bracket programme', 'SIMULATED Customer A', '2025-01-13', null, 'active', '2025-01-06T09:30:00+00:00'),
-  ('2', '1', 'SIM-P002', 'Enclosure programme', 'SIMULATED Customer B', '2025-02-03', null, 'active', '2025-01-06T09:40:00+00:00');
+-- 09_bom_template_items.csv
+insert into bom_template_items (template_code, sort_order, material_id, stage, mass_kg, waste_percent) values
+  ('EXAMPLE_COMPOSITE', '1', '1', 'Final laminate', '2.0', '5'),
+  ('EXAMPLE_COMPOSITE', '2', '4', 'Final laminate', '1.0', '3'),
+  ('EXAMPLE_COMPOSITE', '3', '5', 'Assembly', '0.05', '2'),
+  ('EXAMPLE_COMPOSITE', '4', '6', 'Consumable', '0.08', '20'),
+  ('EXAMPLE_COMPOSITE', '5', '7', 'Consumable', '0.12', '15'),
+  ('EXAMPLE_COMPOSITE', '6', '8', 'Finishing', '0.1', '20'),
+  ('EXAMPLE_COMPOSITE', '7', '9', 'Packaging', '0.2', '0');
 
 
--- 10_parts.csv
-insert into parts (part_id, project_id, part_number, part_description, functional_unit, quantity, length_mm, width_mm, thickness_mm, notes) values
-  ('1', '1', 'BRK-001', 'Aluminium mounting bracket', 'one finished bracket', '5000', '120', '60', '8', 'SIMULATED part'),
-  ('2', '2', 'ENC-001', 'Polypropylene control-box enclosure', 'one finished enclosure', '20000', '220', '140', '60', 'SIMULATED part');
+-- 10_bom_items.csv
+insert into bom_items (bom_item_id, scenario_id, material_id, stage, mass_kg, waste_percent, sequence_no, notes) values
+  ('1', '1', '1', 'Final laminate', '2.0', '5', '1', null),
+  ('2', '1', '4', 'Final laminate', '1.0', '3', '2', null),
+  ('3', '1', '5', 'Assembly', '0.05', '2', '3', null),
+  ('4', '1', '6', 'Consumable', '0.08', '20', '4', null),
+  ('5', '1', '7', 'Consumable', '0.12', '15', '5', null),
+  ('6', '1', '8', 'Finishing', '0.1', '20', '6', null),
+  ('7', '1', '9', 'Packaging', '0.2', '0', '7', null),
+  ('8', '2', '1', 'Final laminate', '2.0', '5', '1', null),
+  ('9', '2', '4', 'Final laminate', '1.0', '3', '2', null),
+  ('10', '2', '5', 'Assembly', '0.05', '2', '3', null),
+  ('11', '2', '6', 'Consumable', '0.08', '20', '4', null),
+  ('12', '2', '7', 'Consumable', '0.12', '15', '5', null),
+  ('13', '2', '8', 'Finishing', '0.1', '20', '6', null),
+  ('14', '2', '9', 'Packaging', '0.2', '0', '7', null),
+  ('15', '3', '1', 'Final laminate', '2.0', '5', '1', null),
+  ('16', '3', '4', 'Final laminate', '1.0', '3', '2', null),
+  ('17', '3', '5', 'Assembly', '0.05', '2', '3', null),
+  ('18', '3', '6', 'Consumable', '0.08', '20', '4', null),
+  ('19', '3', '7', 'Consumable', '0.12', '15', '5', null),
+  ('20', '3', '8', 'Finishing', '0.1', '20', '6', null),
+  ('21', '3', '9', 'Packaging', '0.2', '0', '7', null),
+  ('22', '4', '1', 'Final laminate', '2.0', '5', '1', null),
+  ('23', '4', '4', 'Final laminate', '1.0', '3', '2', null),
+  ('24', '4', '5', 'Assembly', '0.05', '2', '3', null),
+  ('25', '4', '6', 'Consumable', '0.08', '20', '4', null),
+  ('26', '4', '7', 'Consumable', '0.12', '15', '5', null),
+  ('27', '4', '8', 'Finishing', '0.1', '20', '6', null),
+  ('28', '4', '9', 'Packaging', '0.2', '0', '7', null);
 
 
--- 11_equipment.csv
-insert into equipment (equipment_id, organisation_id, equipment_code, equipment_name, equipment_type, manufacturer, model, location, rated_power_kw, used_for, assumptions, notes, active) values
-  ('1', '1', 'EQ-CNC-01', '3-axis CNC machining centre', 'CNC mill', 'SIMULATED Machine Tool Co', 'MT-300', 'Hall A', '22', 'Milling of aluminium parts', null, null, 'true'),
-  ('2', '1', 'EQ-HPDC-01', 'Die casting cell', 'Die caster', 'SIMULATED Foundry Systems', 'DC-800', 'Hall B', '120', 'Casting aluminium parts', 'Includes holding furnace', null, 'true'),
-  ('3', '1', 'EQ-IM-01', 'Injection moulding machine 150 t', 'Injection moulder', 'SIMULATED Polymer Machines', 'IM-150', 'Hall C', '55', 'Moulding polypropylene parts', 'Two-cavity tool', null, 'true'),
-  ('4', '1', 'EQ-WASH-01', 'Parts washer / deburring station', 'Washer', 'SIMULATED Cleaning Ltd', 'PW-10', 'Hall A', '6', 'Deburring and washing', null, null, 'true');
+-- 11_layup_schedule.csv
+insert into layup_schedule (layup_id, scenario_id, layer_no, material_id, fabric_type, ply_count, orientation_deg, resin_ratio_percent, scrap_percent, notes) values
+  ('1', '1', '1', '1', 'Carbon fabric (SIMULATED)', '2', '0', '35', '5', 'SIMULATED layup - replace with the real schedule'),
+  ('2', '1', '2', '1', 'Carbon fabric (SIMULATED)', '2', '90', '35', '5', 'SIMULATED layup'),
+  ('3', '1', '3', '1', 'Carbon fabric (SIMULATED)', '2', '45', '35', '5', 'SIMULATED layup'),
+  ('4', '1', '4', '1', 'Carbon fabric (SIMULATED)', '2', '-45', '35', '5', 'SIMULATED layup');
 
 
--- 12_equipment_factors.csv
-insert into equipment_factors (equipment_factor_id, equipment_id, impact_category_id, factor_value, factor_unit, basis_unit, source_id, approved) values
-  ('1', '1', '1', '0.35', 'kg CO2e / h', 'h', '4', 'true'),
-  ('2', '2', '1', '1.8', 'kg CO2e / h', 'h', '4', 'true'),
-  ('3', '3', '1', '0.5', 'kg CO2e / h', 'h', '4', 'true');
+-- 12_sensor_readings.csv
+insert into sensor_readings (reading_id, scenario_id, route_operation_id, sensor_code, kwh, machine_state, recorded_at, run_label) values
+  ('1', '1', '1', 'MTR-VAC-001', '1.45', 'running', '2025-03-10T10:00:00+00:00', 'B-2025-0001'),
+  ('2', '1', '2', 'MTR-OVN-PPSS', '6.9', 'running', '2025-03-10T13:00:00+00:00', 'B-2025-0001'),
+  ('3', '1', '3', 'MTR-CNC-001', '1.38', 'running', '2025-03-10T13:30:00+00:00', 'B-2025-0001'),
+  ('4', '1', '4', 'MTR-ADH-001', '0.08', 'running', '2025-03-10T14:00:00+00:00', 'B-2025-0001'),
+  ('5', '1', '5', 'MTR-SPRAY-001', '1.95', 'running', '2025-03-10T15:00:00+00:00', 'B-2025-0001');
 
 
--- 13_lca_scenarios.csv
-insert into lca_scenarios (scenario_id, part_id, scenario_name, goal, system_boundary, quantity, electricity_factor, data_quality_target, status, created_at, approved_at) values
-  ('1', '1', 'CNC from billet', 'Baseline route for BRK-001', 'cradle-to-grave', '1', '0.207', 'Fair or better', 'approved', '2025-01-20T10:00:00+00:00', '2025-01-27T10:00:00+00:00'),
-  ('2', '1', 'Die casting + finish machining', 'Lower-material route for BRK-001', 'cradle-to-grave', '1', '0.207', 'Fair or better', 'review', '2025-01-21T10:00:00+00:00', null),
-  ('3', '2', 'Virgin polypropylene', 'Baseline route for ENC-001', 'cradle-to-grave', '1', '0.207', 'Fair or better', 'approved', '2025-02-04T10:00:00+00:00', '2025-02-10T10:00:00+00:00'),
-  ('4', '2', '30% recycled polypropylene', 'Recycled-content option for ENC-001', 'cradle-to-grave', '1', '0.207', 'Fair or better', 'draft', '2025-02-05T10:00:00+00:00', null);
+-- 13_ai_prompt_templates.csv
+insert into ai_prompt_templates (template_id, template_code, template_name, role_text, task_text, questions_text, constraints_text, active) values
+  ('1', 'DEFAULT', 'Energy optimisation prompt (from the dashboard)', 'You are an energy optimisation and composite manufacturing LCA assistant.', 'Analyse this composite product LCA comparison.', '1. Executive summary.
+2. Best and worst manufacturing route observations.
+3. Main energy and carbon hotspots.
+4. Processes where live energy is higher than design baseline.
+5. Likely causes of high energy use.
+6. Quick-win actions that do not affect product quality.
+7. Engineering changes requiring validation.
+8. Sensor/data quality issues.
+9. Prioritised action plan with owner, timescale, risk and estimated kWh / kg CO2e saving.', '- Do not recommend changing cure time, cure temperature, vacuum hold, pressure or material specification unless validated by engineering qualification.
+- Keep BOM/material LCA separate from live energy variance unless actual material consumption also changes.
+- Protect product quality, traceability and safety.', 'true');
 
 
--- 14_bom_items.csv
-insert into bom_items (bom_item_id, scenario_id, item_id, stage_id, net_quantity, unit, waste_percentage, sequence_no, notes) values
-  ('1', '1', '1', '1', '0.45', 'kg', '75', '1', 'Machined from billet - 75% of input becomes chips'),
-  ('2', '1', '5', '1', '0.02', 'kg', '0', '2', null),
-  ('3', '1', '6', '1', '0.05', 'kg', '5', '3', 'Packaging'),
-  ('4', '1', '12', '4', '0.45', 'kg', '0', '4', 'Recycling at end of life'),
-  ('5', '2', '2', '1', '0.45', 'kg', '20', '1', 'Casting runners and flash'),
-  ('6', '2', '5', '1', '0.005', 'kg', '0', '2', null),
-  ('7', '2', '7', '1', '0.003', 'kg', '0', '3', 'Release agent - factor not yet approved'),
-  ('8', '2', '6', '1', '0.05', 'kg', '5', '4', 'Packaging'),
-  ('9', '2', '12', '4', '0.45', 'kg', '0', '5', 'Recycling at end of life'),
-  ('10', '3', '3', '1', '0.32', 'kg', '3', '1', null),
-  ('11', '3', '6', '1', '0.04', 'kg', '5', '2', 'Packaging'),
-  ('12', '4', '3', '1', '0.224', 'kg', '3', '1', '70% virgin'),
-  ('13', '4', '4', '1', '0.096', 'kg', '3', '2', '30% recyclate'),
-  ('14', '4', '6', '1', '0.04', 'kg', '5', '3', 'Packaging');
+-- 14_recommendation_actions.csv
+insert into recommendation_actions (action_id, sort_order, applies_to, action_text, requires_engineering_validation, active) values
+  ('1', '1', 'general', 'Check idle energy and separate running, waiting, standby and fault states.', 'false', 'true'),
+  ('2', '2', 'oven_autoclave', 'For ovens/autoclaves, check loading efficiency, heat-up time, door openings and cycle batching.', 'false', 'true'),
+  ('3', '3', 'vacuum_infusion', 'For vacuum infusion, check vacuum leaks, pump sizing and unnecessary pump running time.', 'false', 'true'),
+  ('4', '4', 'cnc_trimming', 'For CNC/trimming, check tool path efficiency, extraction running time and batch scheduling.', 'false', 'true'),
+  ('5', '5', 'general', 'Replace assumed design energy baselines with measured averages after several production runs.', 'false', 'true'),
+  ('6', '6', 'general', 'Do not change cure or pressure parameters without engineering validation.', 'true', 'true');
 
 
--- 15_scenario_operations.csv
-insert into scenario_operations (operation_id, scenario_id, operation_sequence, lifecycle_stage_id, process_item_id, equipment_id, operation_name, expected_duration_minutes, expected_power_kw, utilisation_factor, expected_energy_kwh, batch_size, process_mass_basis, notes) values
-  ('1', '1', '1', '1', '8', '1', 'CNC milling', '14', '9.5', '0.65', '1.4408', '1', null, null),
-  ('2', '1', '2', '1', '11', '4', 'Deburr and wash', '3', '4', '0.8', '0.16', '10', null, 'Ten parts per wash basket'),
-  ('3', '2', '1', '1', '9', '2', 'Die casting', '1.2', '95', '0.7', '1.33', '1', '0.5625', null),
-  ('4', '2', '2', '1', '8', '1', 'Finish machining', '4', '9.5', '0.6', '0.38', '1', null, null),
-  ('5', '2', '3', '1', '11', '4', 'Deburr and wash', '3', '4', '0.8', '0.16', '10', null, null),
-  ('6', '3', '1', '1', '10', '3', 'Injection moulding', '0.6', '40', '0.55', '0.22', '2', '0.33', 'Two-cavity tool - 2 parts per cycle'),
-  ('7', '4', '1', '1', '10', '3', 'Injection moulding', '0.6', '40', '0.55', '0.22', '2', '0.33', 'Same cycle as baseline');
+-- 15_lca_snapshots.csv
+insert into lca_snapshots (snapshot_id, scenario_id, calculation_version, calculated_at, electricity_factor, alert_threshold_percent, bom_mass_kg, bom_kgco2e, bom_ced_mj, manufacturing_kgco2e, assembly_finishing_kgco2e, design_total_kgco2e, design_ced_mj, design_kwh, live_kwh, live_total_kgco2e, variance_kgco2e, extra_kwh) values
+  ('1', '1', 'v1.0-SIMULATED', '2025-03-14T08:00:00+00:00', '0.26155', '15', '3.735000', '98.703900', '2245.277000', '5.121148', '0.693108', '104.518156', '2276.993000', '8.810000', '11.760000', '105.289728', '0.771573', '2.950000');
 
 
--- 16_production_batches.csv
-insert into production_batches (batch_id, scenario_id, batch_code, part_id, planned_quantity, actual_quantity, scrap_quantity, rework_quantity, start_time, end_time, status) values
-  ('1', '1', 'B-2025-0001', '1', '200', '196', '4', '2', '2025-03-10T08:00:00+00:00', '2025-03-10T17:30:00+00:00', 'completed'),
-  ('2', '3', 'B-2025-0002', '2', '2000', '1960', '40', '0', '2025-03-12T06:00:00+00:00', '2025-03-12T14:00:00+00:00', 'completed');
+-- 16_lca_comparison.csv
+insert into lca_comparison (comparison_id, snapshot_id, route_operation_id, op_no, stage, process_name, machine_name, design_kwh, live_kwh, variance_kwh, variance_percent, status, has_live_data, design_kgco2e, live_kgco2e) values
+  ('1', '1', '1', '1', 'Manufacturing', 'Vacuum infusion', 'Vacuum pump', '1.200000', '1.450000', '0.250000', '20.8333', 'high', 'true', '3.823860', '3.889248'),
+  ('2', '1', '2', '2', 'Manufacturing', 'Oven cure', 'PPSS oven', '4.960000', '6.900000', '1.940000', '39.1129', 'high', 'true', '1.297288', '1.804695'),
+  ('3', '1', '3', '3', 'Assembly', 'CNC trimming', 'CNC router', '1.100000', '1.380000', '0.280000', '25.4545', 'high', 'true', '0.287705', '0.360939'),
+  ('4', '1', '4', '4', 'Assembly', 'Adhesive bonding', 'Adhesive dispenser', '0.050000', '0.080000', '0.030000', '60.0000', 'high', 'true', '0.013078', '0.020924'),
+  ('5', '1', '5', '5', 'Finishing', 'Paint application', 'Spray booth', '1.500000', '1.950000', '0.450000', '30.0000', 'high', 'true', '0.392325', '0.510023');
 
 
--- 17_sensor_devices.csv
-insert into sensor_devices (sensor_id, equipment_id, sensor_code, sensor_name, sensor_type, measurement_type, unit, sampling_interval_seconds, protocol, active, installed_at) values
-  ('1', '1', 'SM-CNC-01', 'Energy meter - CNC mill', 'Smart meter', 'energy', 'kWh', '3600', 'Modbus TCP', 'true', '2025-02-01T09:00:00+00:00'),
-  ('2', '3', 'SM-IM-01', 'Energy meter - injection moulder', 'Smart meter', 'energy', 'kWh', '3600', 'Modbus TCP', 'true', '2025-02-01T09:30:00+00:00'),
-  ('3', '1', 'PW-CNC-01', 'Power sensor - CNC mill', 'Power transducer', 'power', 'kW', '60', 'OPC UA', 'true', '2025-02-01T09:15:00+00:00');
+-- 17_ai_prompts.csv
+insert into ai_prompts (prompt_id, snapshot_id, template_id, context, prompt_text, created_at) values
+  ('1', '1', '1', '{"project": "Composite Product LCA", "extra_kwh": 2.950, "part_number": "CP-LCA-001", "selected_route": "Vacuum Infusion Route", "functional_unit": "One finished composite part", "variance_kgco2e": 0.772, "part_description": "Composite structural cover panel", "live_total_kgco2e": 105.290, "design_total_kgco2e": 104.518, "operation_comparison": [{"id": 1, "stage": "Manufacturing", "machine": "Vacuum pump", "process": "Vacuum infusion", "live_kwh": 1.450, "design_kwh": 1.200, "live_kgco2e": 3.889, "variance_kwh": 0.250, "design_kgco2e": 3.824, "has_live_reading": true, "variance_percent": 20.8}, {"id": 2, "stage": "Manufacturing", "machine": "PPSS oven", "process": "Oven cure", "live_kwh": 6.900, "design_kwh": 4.960, "live_kgco2e": 1.805, "variance_kwh": 1.940, "design_kgco2e": 1.297, "has_live_reading": true, "variance_percent": 39.1}, {"id": 3, "stage": "Assembly", "machine": "CNC router", "process": "CNC trimming", "live_kwh": 1.380, "design_kwh": 1.100, "live_kgco2e": 0.361, "variance_kwh": 0.280, "design_kgco2e": 0.288, "has_live_reading": true, "variance_percent": 25.5}, {"id": 4, "stage": "Assembly", "machine": "Adhesive dispenser", "process": "Adhesive bonding", "live_kwh": 0.080, "design_kwh": 0.050, "live_kgco2e": 0.021, "variance_kwh": 0.030, "design_kgco2e": 0.013, "has_live_reading": true, "variance_percent": 60.0}, {"id": 5, "stage": "Finishing", "machine": "Spray booth", "process": "Paint application", "live_kwh": 1.950, "design_kwh": 1.500, "live_kgco2e": 0.510, "variance_kwh": 0.450, "design_kgco2e": 0.392, "has_live_reading": true, "variance_percent": 30.0}], "electricity_factor_kgco2e_per_kwh": 0.26155}', 'You are an energy optimisation and composite manufacturing LCA assistant.
+
+Analyse this composite product LCA comparison.
+
+Context:
+{
+    "project": "Composite Product LCA",
+    "extra_kwh": 2.950,
+    "part_number": "CP-LCA-001",
+    "selected_route": "Vacuum Infusion Route",
+    "functional_unit": "One finished composite part",
+    "variance_kgco2e": 0.772,
+    "part_description": "Composite structural cover panel",
+    "live_total_kgco2e": 105.290,
+    "design_total_kgco2e": 104.518,
+    "operation_comparison": [
+        {
+            "id": 1,
+            "stage": "Manufacturing",
+            "machine": "Vacuum pump",
+            "process": "Vacuum infusion",
+            "live_kwh": 1.450,
+            "design_kwh": 1.200,
+            "live_kgco2e": 3.889,
+            "variance_kwh": 0.250,
+            "design_kgco2e": 3.824,
+            "has_live_reading": true,
+            "variance_percent": 20.8
+        },
+        {
+            "id": 2,
+            "stage": "Manufacturing",
+            "machine": "PPSS oven",
+            "process": "Oven cure",
+            "live_kwh": 6.900,
+            "design_kwh": 4.960,
+            "live_kgco2e": 1.805,
+            "variance_kwh": 1.940,
+            "design_kgco2e": 1.297,
+            "has_live_reading": true,
+            "variance_percent": 39.1
+        },
+        {
+            "id": 3,
+            "stage": "Assembly",
+            "machine": "CNC router",
+            "process": "CNC trimming",
+            "live_kwh": 1.380,
+            "design_kwh": 1.100,
+            "live_kgco2e": 0.361,
+            "variance_kwh": 0.280,
+            "design_kgco2e": 0.288,
+            "has_live_reading": true,
+            "variance_percent": 25.5
+        },
+        {
+            "id": 4,
+            "stage": "Assembly",
+            "machine": "Adhesive dispenser",
+            "process": "Adhesive bonding",
+            "live_kwh": 0.080,
+            "design_kwh": 0.050,
+            "live_kgco2e": 0.021,
+            "variance_kwh": 0.030,
+            "design_kgco2e": 0.013,
+            "has_live_reading": true,
+            "variance_percent": 60.0
+        },
+        {
+            "id": 5,
+            "stage": "Finishing",
+            "machine": "Spray booth",
+            "process": "Paint application",
+            "live_kwh": 1.950,
+            "design_kwh": 1.500,
+            "live_kgco2e": 0.510,
+            "variance_kwh": 0.450,
+            "design_kgco2e": 0.392,
+            "has_live_reading": true,
+            "variance_percent": 30.0
+        }
+    ],
+    "electricity_factor_kgco2e_per_kwh": 0.26155
+}
+
+Please provide:
+1. Executive summary.
+2. Best and worst manufacturing route observations.
+3. Main energy and carbon hotspots.
+4. Processes where live energy is higher than design baseline.
+5. Likely causes of high energy use.
+6. Quick-win actions that do not affect product quality.
+7. Engineering changes requiring validation.
+8. Sensor/data quality issues.
+9. Prioritised action plan with owner, timescale, risk and estimated kWh / kg CO2e saving.
+
+Constraints:
+- Do not recommend changing cure time, cure temperature, vacuum hold, pressure or material specification unless validated by engineering qualification.
+- Keep BOM/material LCA separate from live energy variance unless actual material consumption also changes.
+- Protect product quality, traceability and safety.', '2025-03-14T08:00:00+00:00');
 
 
--- 18_sensor_readings.csv
-insert into sensor_readings (sensor_id, recorded_at, batch_id, operation_id, value, unit, machine_state, quality_flag, ingestion_source, received_at) values
-  ('1', '2025-03-10T09:00:00+00:00', '1', '1', '28.4', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T10:00:00+00:00', '1', '1', '29.6', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T11:00:00+00:00', '1', '1', '30.1', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T12:00:00+00:00', '1', '1', '27.9', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T13:00:00+00:00', '1', '1', '29.2', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T14:00:00+00:00', '1', '1', '28.8', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T15:00:00+00:00', '1', '1', '30.4', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T16:00:00+00:00', '1', '1', '29.9', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T17:00:00+00:00', '1', '1', '28.1', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('1', '2025-03-10T17:30:00+00:00', '1', '1', '14.7', 'kWh', 'running', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('2', '2025-03-12T07:00:00+00:00', '2', '6', '26.1', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T08:00:00+00:00', '2', '6', '27.4', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T09:00:00+00:00', '2', '6', '26.8', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T10:00:00+00:00', '2', '6', '27.9', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T11:00:00+00:00', '2', '6', '26.5', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T12:00:00+00:00', '2', '6', '27.2', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T13:00:00+00:00', '2', '6', '26.9', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('2', '2025-03-12T14:00:00+00:00', '2', '6', '27.6', 'kWh', 'running', 'good', 'csv_upload', '2025-03-13T08:00:00+00:00'),
-  ('3', '2025-03-10T10:00:00+00:00', '1', '1', '9.1', 'kW', 'cutting', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('3', '2025-03-10T10:01:00+00:00', '1', '1', '9.8', 'kW', 'cutting', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('3', '2025-03-10T10:02:00+00:00', '1', '1', '0.8', 'kW', 'tool_change', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('3', '2025-03-10T10:03:00+00:00', '1', '1', '9.4', 'kW', 'cutting', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00'),
-  ('3', '2025-03-10T10:04:00+00:00', '1', '1', '9.6', 'kW', 'cutting', 'good', 'csv_upload', '2025-03-11T08:00:00+00:00');
-
-
--- 19_lca_results.csv
-insert into lca_results (result_id, scenario_id, batch_id, result_type, impact_category_id, lifecycle_stage_id, result_value, unit, calculation_version, calculated_at) values
-  ('1', '1', null, 'design', '1', '1', '15.318926', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'),
-  ('2', '1', null, 'design', '1', '4', '-0.675000', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'),
-  ('3', '2', null, 'design', '1', '1', '4.950025', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'),
-  ('4', '2', null, 'design', '1', '4', '-0.675000', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'),
-  ('5', '3', null, 'design', '1', '1', '0.720464', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'),
-  ('6', '4', null, 'design', '1', '1', '0.601701', 'kg CO2e', 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00');
-
-
--- 20_operation_energy_comparison.csv
-insert into operation_energy_comparison (comparison_id, batch_id, operation_id, expected_kwh, measured_kwh, expected_co2e_kg, measured_co2e_kg, calculated_at) values
-  ('1', '1', '1', '282.396800', '277.100000', '58.456138', '57.359700', '2025-03-14T08:00:00+00:00'),
-  ('2', '1', '2', '3.136000', null, '0.649152', null, '2025-03-14T08:00:00+00:00'),
-  ('3', '2', '6', '215.600000', '216.400000', '44.629200', '44.794800', '2025-03-14T08:00:00+00:00');
-
-
--- 21_ai_recommendations.csv
-insert into ai_recommendations (recommendation_id, scenario_id, batch_id, operation_id, recommendation_text, estimated_kwh_saving, estimated_co2e_saving, risk_level, requires_engineering_validation, validation_status, created_at) values
-  ('1', '1', '1', '1', 'SIMULATED: Reduce CNC idle time during tool changes by batching tool changes per fixture.', '12', '2.5', 'low', 'true', 'under_review', '2025-03-14T09:00:00+00:00'),
-  ('2', '3', '2', '6', 'SIMULATED: Lower barrel heater set-points by 5 C after validating melt quality.', '8', '1.7', 'medium', 'true', 'proposed', '2025-03-14T09:10:00+00:00');
-
-
--- 22_energy_actions.csv
-insert into energy_actions (action_id, recommendation_id, action_description, owner_name, due_date, status, validation_outcome) values
-  ('1', '1', 'SIMULATED: Trial batched tool changes on the next BRK-001 batch', 'SIMULATED Process Engineer', '2025-04-30', 'in_progress', null),
-  ('2', '2', 'SIMULATED: Quality sign-off on reduced heater set-points', 'SIMULATED Quality Lead', '2025-05-15', 'open', null);
+-- 18_ai_recommendations.csv
+insert into ai_recommendations (recommendation_id, snapshot_id, scenario_id, route_operation_id, source, finding_type, severity, recommendation_text, estimated_kwh_saving, estimated_co2e_saving, action_owner, due_date, requires_engineering_validation, validation_status, created_at) values
+  ('1', '1', '1', '2', 'rule', 'high_variance', 'high', 'PPSS oven / Oven cure: +1.940 kWh, 39.1% above design. Potential saving if returned to the design baseline.', '1.940000', '0.50740700000', null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('2', '1', '1', '5', 'rule', 'high_variance', 'high', 'Spray booth / Paint application: +0.450 kWh, 30.0% above design. Potential saving if returned to the design baseline.', '0.450000', '0.11769750000', null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('3', '1', '1', '3', 'rule', 'high_variance', 'high', 'CNC router / CNC trimming: +0.280 kWh, 25.5% above design. Potential saving if returned to the design baseline.', '0.280000', '0.07323400000', null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('4', '1', '1', '1', 'rule', 'high_variance', 'high', 'Vacuum pump / Vacuum infusion: +0.250 kWh, 20.8% above design. Potential saving if returned to the design baseline.', '0.250000', '0.06538750000', null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('5', '1', '1', '4', 'rule', 'high_variance', 'high', 'Adhesive dispenser / Adhesive bonding: +0.030 kWh, 60.0% above design. Potential saving if returned to the design baseline.', '0.030000', '0.00784650000', null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('6', '1', '1', null, 'library', 'suggested_action', 'info', 'Check idle energy and separate running, waiting, standby and fault states.', null, null, null, null, 'false', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('7', '1', '1', null, 'library', 'suggested_action', 'info', 'For ovens/autoclaves, check loading efficiency, heat-up time, door openings and cycle batching.', null, null, null, null, 'false', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('8', '1', '1', null, 'library', 'suggested_action', 'info', 'For vacuum infusion, check vacuum leaks, pump sizing and unnecessary pump running time.', null, null, null, null, 'false', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('9', '1', '1', null, 'library', 'suggested_action', 'info', 'For CNC/trimming, check tool path efficiency, extraction running time and batch scheduling.', null, null, null, null, 'false', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('10', '1', '1', null, 'library', 'suggested_action', 'info', 'Replace assumed design energy baselines with measured averages after several production runs.', null, null, null, null, 'false', 'proposed', '2025-03-14T08:00:00+00:00'),
+  ('11', '1', '1', null, 'library', 'suggested_action', 'info', 'Do not change cure or pressure parameters without engineering validation.', null, null, null, null, 'true', 'proposed', '2025-03-14T08:00:00+00:00');
 
 select reset_identity_sequences();
 commit;

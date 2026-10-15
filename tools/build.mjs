@@ -1,10 +1,11 @@
-// npm run build — regenerates (1) the two CSVs that are calculated from the others,
-// (2) supabase/3_sample_data.sql, (3) docs/sample-data.js used by the dashboard.
+// npm run build — regenerates (1) the four CSVs that the database itself produces
+// (saved comparison, comparison lines, AI prompt, recommendations) by running the dashboard's
+// "buttons" on the sample data, (2) supabase/3_sample_data.sql, (3) docs/sample-data.js.
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { newDb, loadCsvs, csvFiles, csvToInsertSql, ROOT, CSV_DIR } from './lib.mjs';
 
-const DERIVED = ['19_lca_results.csv', '20_operation_energy_comparison.csv'];
+const DERIVED = ['15_lca_snapshots.csv', '16_lca_comparison.csv', '17_ai_prompts.csv', '18_ai_recommendations.csv'];
 const TS = (c) => `to_char(${c} at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"+00:00"')`;
 const q = (v) => (v == null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
 const writeCsv = (file, cols, rows) =>
@@ -13,44 +14,42 @@ const writeCsv = (file, cols, rows) =>
 const db = await newDb();
 await loadCsvs(db, (f) => !DERIVED.includes(f));
 
-// design results = the calculation view summed per scenario and life-cycle stage
+// the three analysis buttons on the vacuum infusion scenario: save comparison, generate prompt, generate recommendations
 await db.exec(`
-  insert into lca_results (result_id, scenario_id, result_type, impact_category_id, lifecycle_stage_id, result_value, unit, calculation_version, calculated_at)
-  select row_number() over (order by l.scenario_id, st.sequence_no), l.scenario_id, 'design', ic.impact_category_id, st.stage_id,
-         round(sum(l.impact_value), 6), l.impact_unit, 'v1.0-SIMULATED', '2025-03-01T12:00:00+00:00'
-  from v_impact_lines l
-  join lifecycle_stages st on st.stage_code = l.stage_code
-  join impact_categories ic on ic.impact_code = l.impact_code
-  group by l.scenario_id, st.sequence_no, st.stage_id, ic.impact_category_id, l.impact_unit;
-  select refresh_operation_energy_comparison(1);
-  select refresh_operation_energy_comparison(2);
-  update operation_energy_comparison set calculated_at = '2025-03-14T08:00:00+00:00';
-`);
-const res = await db.query(`select result_id, scenario_id, batch_id, result_type, impact_category_id, lifecycle_stage_id, result_value, unit, calculation_version, ${TS('calculated_at')} as calculated_at from lca_results order by 1`);
-writeCsv(DERIVED[0], ['result_id', 'scenario_id', 'batch_id', 'result_type', 'impact_category_id', 'lifecycle_stage_id', 'result_value', 'unit', 'calculation_version', 'calculated_at'], res.rows);
-const cmp = await db.query(`select comparison_id, batch_id, operation_id, round(expected_kwh,6) expected_kwh, round(measured_kwh,6) measured_kwh, round(expected_co2e_kg,6) expected_co2e_kg, round(measured_co2e_kg,6) measured_co2e_kg, ${TS('calculated_at')} as calculated_at from operation_energy_comparison order by 1`);
-writeCsv(DERIVED[1], ['comparison_id', 'batch_id', 'operation_id', 'expected_kwh', 'measured_kwh', 'expected_co2e_kg', 'measured_co2e_kg', 'calculated_at'], cmp.rows);
+  select run_analysis(1, 'v1.0-SIMULATED');
+  update lca_snapshots set calculated_at = '2025-03-14T08:00:00+00:00';
+  update ai_prompts set created_at = '2025-03-14T08:00:00+00:00';
+  update ai_recommendations set created_at = '2025-03-14T08:00:00+00:00';`);
+const dump = async (file, table, cols, order = 1) => {
+  const sel = cols.map((c) => (/_at$/.test(c) ? `${TS(c)} as ${c}` : c === 'context' ? 'context::text as context' : c)).join(', ');
+  const r = await db.query(`select ${sel} from ${table} order by ${order}`);
+  writeCsv(file, cols, r.rows);
+  return r.rows.length;
+};
+const nSnap = await dump(DERIVED[0], 'lca_snapshots', ['snapshot_id', 'scenario_id', 'calculation_version', 'calculated_at', 'electricity_factor', 'alert_threshold_percent', 'bom_mass_kg', 'bom_kgco2e', 'bom_ced_mj', 'manufacturing_kgco2e', 'assembly_finishing_kgco2e', 'design_total_kgco2e', 'design_ced_mj', 'design_kwh', 'live_kwh', 'live_total_kgco2e', 'variance_kgco2e', 'extra_kwh']);
+const nCmp = await dump(DERIVED[1], 'lca_comparison', ['comparison_id', 'snapshot_id', 'route_operation_id', 'op_no', 'stage', 'process_name', 'machine_name', 'design_kwh', 'live_kwh', 'variance_kwh', 'variance_percent', 'status', 'has_live_data', 'design_kgco2e', 'live_kgco2e']);
+const nPrm = await dump(DERIVED[2], 'ai_prompts', ['prompt_id', 'snapshot_id', 'template_id', 'context', 'prompt_text', 'created_at']);
+const nRec = await dump(DERIVED[3], 'ai_recommendations', ['recommendation_id', 'snapshot_id', 'scenario_id', 'route_operation_id', 'source', 'finding_type', 'severity', 'recommendation_text', 'estimated_kwh_saving', 'estimated_co2e_saving', 'action_owner', 'due_date', 'requires_engineering_validation', 'validation_status', 'created_at']);
 
-// one-paste sample data for Supabase
+// one-paste sample data for Supabase: files 01-18 -> 3_sample_data.sql, 31+ (digital twin) -> 5_digital_twin_sample_data.sql
 const files = csvFiles();
-writeFileSync(join(ROOT, 'supabase', '3_sample_data.sql'), [
-  '-- AUTO-GENERATED from data/csv/*.csv by tools/build.mjs. SIMULATED SAMPLE DATA ONLY.',
-  '-- Run once, after 1_schema.sql and 2_views_and_security.sql.',
-  'begin;', ...files.map((f) => `\n-- ${f}\n${csvToInsertSql(f)}`),
-  'select reset_identity_sequences();', 'commit;', ''].join('\n'));
+const seedSql = (list, title, after) => [
+  `-- AUTO-GENERATED from data/csv/*.csv by tools/build.mjs. SIMULATED / EXAMPLE DATA ONLY.`,
+  `-- ${title}`, 'begin;', ...list.map((f) => `\n-- ${f}\n${csvToInsertSql(f)}`), 'select reset_identity_sequences();', 'commit;', ''].join('\n');
+const isTwin = (f) => parseInt(f, 10) >= 30;
+writeFileSync(join(ROOT, 'supabase', '3_sample_data.sql'), seedSql(files.filter((f) => !isTwin(f)), 'Run once, after 1_schema.sql and 2_views_and_security.sql.'));
+writeFileSync(join(ROOT, 'supabase', '5_digital_twin_sample_data.sql'), seedSql(files.filter(isTwin), 'Digital twin sample layout. Run once, after 3_sample_data.sql and 4_digital_twin.sql.'));
 
-// the dashboard's built-in data = exactly what the three dashboard views return
+// the dashboard's built-in data = exactly what the dashboard views return
 const full = await newDb();
 await loadCsvs(full);
 const num = (rows) => rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) =>
-  [k, typeof v === 'string' && v !== '' && !Number.isNaN(Number(v)) && !/code|name|number|status/.test(k) ? Number(v) : v])));
-const get = async (sql) => num((await full.query(sql)).rows);
-const data = {
-  v_scenario_totals: await get('select * from v_scenario_totals order by scenario_id, impact_code'),
-  v_bom_missing_factors: await get('select * from v_bom_missing_factors order by scenario_id'),
-  v_energy_comparison: await get('select * from v_energy_comparison order by comparison_id'),
-};
+  [k, typeof v === 'string' && /^-?\d+(\.\d+)?$/.test(v) && !/code|name|number|label|text|type/.test(k) ? Number(v) : v])));
+const data = {};
+for (const v of ['v_scenario_summary', 'v_dash_parts', 'v_dash_materials', 'v_dash_scenarios', 'v_dash_bom', 'v_dash_layup', 'v_dash_operations', 'v_dash_live', 'v_dash_ai_template', 'v_dash_recommendation_actions', 'v_dash_floor', 'v_dash_floor_zones', 'v_dash_floor_machines']) {
+  data[v] = num((await full.query(`select * from ${v} order by 1, 2`)).rows);
+}
 writeFileSync(join(ROOT, 'docs', 'sample-data.js'),
-  '// AUTO-GENERATED by tools/build.mjs - results of the three dashboard views on the SIMULATED sample data.\n' +
+  '// AUTO-GENERATED by tools/build.mjs - results of the dashboard views on the SIMULATED / EXAMPLE sample data.\n' +
   'window.SAMPLE_DATA = ' + JSON.stringify(data, null, 1) + ';\n');
-console.log(`built: ${res.rows.length} results, ${cmp.rows.length} comparisons, ${files.length} CSVs`);
+console.log(`built: ${nSnap} snapshot, ${nCmp} comparison rows, ${nPrm} prompt, ${nRec} recommendations, ${files.length} CSVs`);

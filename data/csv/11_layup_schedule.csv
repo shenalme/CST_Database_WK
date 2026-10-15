@@ -1,0 +1,5 @@
+layup_id,scenario_id,layer_no,material_id,fabric_type,ply_count,orientation_deg,resin_ratio_percent,scrap_percent,notes
+1,1,1,1,Carbon fabric (SIMULATED),2,0,35,5,SIMULATED layup - replace with the real schedule
+2,1,2,1,Carbon fabric (SIMULATED),2,90,35,5,SIMULATED layup
+3,1,3,1,Carbon fabric (SIMULATED),2,45,35,5,SIMULATED layup
+4,1,4,1,Carbon fabric (SIMULATED),2,-45,35,5,SIMULATED layup

@@ -1,0 +1,10 @@
+material_id,material_code,material_name,material_type,cf_kgco2e_per_kg,ced_mj_per_kg,source_note,approved,created_at
+1,MAT-CARBON-FIBRE,Carbon fibre,Fibre,43.87,998,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+2,MAT-EGLASS-FIBRE,E-glass fibre,Fibre,1.27,32,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+3,MAT-EPOXY,Epoxy resin,Resin,5.7,130,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+4,MAT-VINYLESTER,Vinyl ester resin,Resin,4.59,107.9,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+5,MAT-ADHESIVE-1,Adhesive 1,Adhesive,6.2,140,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+6,MAT-PEEL-PLY,Peel ply,Consumable,3.0,70,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+7,MAT-VAC-BAG,Vacuum bagging film,Consumable,2.5,60,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+8,MAT-PAINT-1,Paint 1,Finishing,6.0,115,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00
+9,MAT-CARDBOARD,Cardboard packaging,Packaging,0.9,12,Example value from the team's dashboard mock-up - to be verified and approved,true,2025-01-08T10:00:00+00:00

@@ -1,0 +1,6 @@
+sensor_code,machine_id,sensor_type,unit,installed_at
+MTR-VAC-001,1,energy meter,kWh,2025-02-01T09:00:00+00:00
+MTR-OVN-PPSS,2,energy meter,kWh,2025-02-01T09:00:00+00:00
+MTR-CNC-001,3,energy meter,kWh,2025-02-01T09:00:00+00:00
+MTR-ADH-001,4,energy meter,kWh,2025-02-01T09:00:00+00:00
+MTR-SPRAY-001,5,energy meter,kWh,2025-02-01T09:00:00+00:00

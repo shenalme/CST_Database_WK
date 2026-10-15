@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const CSV_DIR = join(ROOT, 'data', 'csv');
 export const SQL_DIR = join(ROOT, 'supabase');
-export const SCHEMA_FILES = ['1_schema.sql', '2_views_and_security.sql'];
+export const SCHEMA_FILES = ['1_schema.sql', '2_views_and_security.sql', '4_digital_twin.sql'];
 
 export async function newDb() {
   const db = new PGlite();

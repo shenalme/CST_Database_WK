@@ -1,0 +1,7 @@
+action_id,sort_order,applies_to,action_text,requires_engineering_validation,active
+1,1,general,"Check idle energy and separate running, waiting, standby and fault states.",false,true
+2,2,oven_autoclave,"For ovens/autoclaves, check loading efficiency, heat-up time, door openings and cycle batching.",false,true
+3,3,vacuum_infusion,"For vacuum infusion, check vacuum leaks, pump sizing and unnecessary pump running time.",false,true
+4,4,cnc_trimming,"For CNC/trimming, check tool path efficiency, extraction running time and batch scheduling.",false,true
+5,5,general,Replace assumed design energy baselines with measured averages after several production runs.,false,true
+6,6,general,Do not change cure or pressure parameters without engineering validation.,true,true

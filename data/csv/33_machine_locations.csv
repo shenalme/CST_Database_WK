@@ -1,0 +1,14 @@
+machine_id,floor_id,zone_id,x_m,y_m,width_m,height_m,notes
+1,1,1,9,2.5,2.0,1.5,SIMULATED layout - replace with the real floor plan
+2,1,2,27,3,4.0,3.0,SIMULATED layout - replace with the real floor plan
+3,1,3,4,21,6.0,3.5,SIMULATED layout - replace with the real floor plan
+4,1,3,14,21,3.0,2.0,SIMULATED layout - replace with the real floor plan
+5,1,4,34,21,7.0,5.0,SIMULATED layout - replace with the real floor plan
+6,1,1,15,2.5,4.0,3.0,SIMULATED layout - replace with the real floor plan
+7,1,2,35,3,5.0,4.0,SIMULATED layout - replace with the real floor plan
+8,1,3,21,21,2.0,1.5,SIMULATED layout - replace with the real floor plan
+9,1,1,2.5,2.5,4.0,2.5,SIMULATED layout - replace with the real floor plan
+10,1,2,43,3,5.0,4.0,SIMULATED layout - replace with the real floor plan
+11,1,4,44,21,3.0,2.0,SIMULATED layout - replace with the real floor plan
+12,1,4,51,21,5.0,3.5,SIMULATED layout - replace with the real floor plan
+13,1,2,50,3,8.0,5.0,SIMULATED layout - replace with the real floor plan

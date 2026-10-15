@@ -3,6 +3,23 @@
   "private": true,
   "type": "module",
   "description": "Checks the SQL on an in-memory PostgreSQL and regenerates the sample-data files. Optional - not needed to use the database.",
-  "scripts": { "build": "node build.mjs", "validate": "node validate.mjs" },
-  "dependencies": { "@electric-sql/pglite": "0.3.14", "csv-parse": "5.6.0" }
+  "scripts": {
+    "build": "node build.mjs && node bundle.mjs && node models.mjs",
+    "bundle": "node bundle.mjs",
+    "models": "node models.mjs",
+    "optimise-model": "node optimise-model.mjs",
+    "validate": "node validate.mjs",
+    "mock-supabase": "node mock-supabase.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "csv-parse": "5.6.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^3.10.1",
+    "@gltf-transform/extensions": "^3.10.1",
+    "@gltf-transform/functions": "^3.10.1",
+    "esbuild": "^0.21.5",
+    "meshoptimizer": "^0.20.0"
+  }
 }
