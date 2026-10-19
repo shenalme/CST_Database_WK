@@ -1,8 +1,0 @@
-operation_id,scenario_id,operation_sequence,lifecycle_stage_id,process_item_id,equipment_id,operation_name,expected_duration_minutes,expected_power_kw,utilisation_factor,expected_energy_kwh,batch_size,process_mass_basis,notes
-1,1,1,1,8,1,CNC milling,14,9.5,0.65,1.4408,1,,
-2,1,2,1,11,4,Deburr and wash,3,4,0.8,0.16,10,,Ten parts per wash basket
-3,2,1,1,9,2,Die casting,1.2,95,0.7,1.33,1,0.5625,
-4,2,2,1,8,1,Finish machining,4,9.5,0.6,0.38,1,,
-5,2,3,1,11,4,Deburr and wash,3,4,0.8,0.16,10,,
-6,3,1,1,10,3,Injection moulding,0.6,40,0.55,0.22,2,0.33,Two-cavity tool - 2 parts per cycle
-7,4,1,1,10,3,Injection moulding,0.6,40,0.55,0.22,2,0.33,Same cycle as baseline

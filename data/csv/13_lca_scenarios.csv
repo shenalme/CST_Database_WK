@@ -1,5 +1,0 @@
-scenario_id,part_id,scenario_name,goal,system_boundary,quantity,electricity_factor,data_quality_target,status,created_at,approved_at
-1,1,CNC from billet,Baseline route for BRK-001,cradle-to-grave,1,0.207,Fair or better,approved,2025-01-20T10:00:00+00:00,2025-01-27T10:00:00+00:00
-2,1,Die casting + finish machining,Lower-material route for BRK-001,cradle-to-grave,1,0.207,Fair or better,review,2025-01-21T10:00:00+00:00,
-3,2,Virgin polypropylene,Baseline route for ENC-001,cradle-to-grave,1,0.207,Fair or better,approved,2025-02-04T10:00:00+00:00,2025-02-10T10:00:00+00:00
-4,2,30% recycled polypropylene,Recycled-content option for ENC-001,cradle-to-grave,1,0.207,Fair or better,draft,2025-02-05T10:00:00+00:00,

@@ -1,3 +1,0 @@
-project_id,organisation_id,project_code,project_name,customer_name,start_date,end_date,status,created_at
-1,1,SIM-P001,Bracket programme,SIMULATED Customer A,2025-01-13,,active,2025-01-06T09:30:00+00:00
-2,1,SIM-P002,Enclosure programme,SIMULATED Customer B,2025-02-03,,active,2025-01-06T09:40:00+00:00

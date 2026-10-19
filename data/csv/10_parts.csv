@@ -1,3 +1,0 @@
-part_id,project_id,part_number,part_description,functional_unit,quantity,length_mm,width_mm,thickness_mm,notes
-1,1,BRK-001,Aluminium mounting bracket,one finished bracket,5000,120,60,8,SIMULATED part
-2,2,ENC-001,Polypropylene control-box enclosure,one finished enclosure,20000,220,140,60,SIMULATED part

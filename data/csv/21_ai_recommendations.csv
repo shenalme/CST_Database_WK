@@ -1,3 +1,0 @@
-recommendation_id,scenario_id,batch_id,operation_id,recommendation_text,estimated_kwh_saving,estimated_co2e_saving,risk_level,requires_engineering_validation,validation_status,created_at
-1,1,1,1,SIMULATED: Reduce CNC idle time during tool changes by batching tool changes per fixture.,12,2.5,low,true,under_review,2025-03-14T09:00:00+00:00
-2,3,2,6,SIMULATED: Lower barrel heater set-points by 5 C after validating melt quality.,8,1.7,medium,true,proposed,2025-03-14T09:10:00+00:00

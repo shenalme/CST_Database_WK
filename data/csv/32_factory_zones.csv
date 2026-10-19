@@ -1,5 +1,0 @@
-zone_id,floor_id,zone_name,x_m,y_m,width_m,height_m,colour,notes
-1,1,A  Preparation and infusion,0,0,24,17,#dbeafe,SIMULATED layout - replace with the real floor plan
-2,1,B  Curing and forming,24,0,36,17,#fee2e2,SIMULATED layout - replace with the real floor plan
-3,1,C  Machining and assembly,0,17,30,17,#dcfce7,SIMULATED layout - replace with the real floor plan
-4,1,D  Finishing and dispatch,30,17,30,17,#fef3c7,SIMULATED layout - replace with the real floor plan

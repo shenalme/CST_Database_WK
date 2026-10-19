@@ -1,5 +1,0 @@
-source_id,source_name,source_type,citation,url,publication_year,database_name,version,notes
-1,SIMULATED generic LCI database,database,SIMULATED - not a real database,,2024,SimLCI,1.0,Placeholder for an inventory database
-2,SIMULATED supplier EPD (aluminium billet),supplier,SIMULATED - not a real EPD,,2023,,,Placeholder supplier declaration
-3,SIMULATED national grid factor publication,standard,SIMULATED - not a real publication,,2024,,2024,Placeholder grid emission factor
-4,SIMULATED internal measurement campaign,measurement,SIMULATED - not real measurements,,2025,,,Placeholder shop-floor measurements

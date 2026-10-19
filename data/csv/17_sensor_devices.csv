@@ -1,4 +1,0 @@
-sensor_id,equipment_id,sensor_code,sensor_name,sensor_type,measurement_type,unit,sampling_interval_seconds,protocol,active,installed_at
-1,1,SM-CNC-01,Energy meter - CNC mill,Smart meter,energy,kWh,3600,Modbus TCP,true,2025-02-01T09:00:00+00:00
-2,3,SM-IM-01,Energy meter - injection moulder,Smart meter,energy,kWh,3600,Modbus TCP,true,2025-02-01T09:30:00+00:00
-3,1,PW-CNC-01,Power sensor - CNC mill,Power transducer,power,kW,60,OPC UA,true,2025-02-01T09:15:00+00:00

@@ -1,5 +1,0 @@
-equipment_id,organisation_id,equipment_code,equipment_name,equipment_type,manufacturer,model,location,rated_power_kw,used_for,assumptions,notes,active
-1,1,EQ-CNC-01,3-axis CNC machining centre,CNC mill,SIMULATED Machine Tool Co,MT-300,Hall A,22,Milling of aluminium parts,,,true
-2,1,EQ-HPDC-01,Die casting cell,Die caster,SIMULATED Foundry Systems,DC-800,Hall B,120,Casting aluminium parts,Includes holding furnace,,true
-3,1,EQ-IM-01,Injection moulding machine 150 t,Injection moulder,SIMULATED Polymer Machines,IM-150,Hall C,55,Moulding polypropylene parts,Two-cavity tool,,true
-4,1,EQ-WASH-01,Parts washer / deburring station,Washer,SIMULATED Cleaning Ltd,PW-10,Hall A,6,Deburring and washing,,,true

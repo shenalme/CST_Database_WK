@@ -1,2 +1,0 @@
-snapshot_id,scenario_id,calculation_version,calculated_at,electricity_factor,alert_threshold_percent,bom_mass_kg,bom_kgco2e,bom_ced_mj,manufacturing_kgco2e,assembly_finishing_kgco2e,design_total_kgco2e,design_ced_mj,design_kwh,live_kwh,live_total_kgco2e,variance_kgco2e,extra_kwh
-1,1,v1.0-SIMULATED,2025-03-14T08:00:00+00:00,0.26155,15,3.735000,98.703900,2245.277000,5.121148,0.693108,104.518156,2276.993000,8.810000,11.760000,105.289728,0.771573,2.950000

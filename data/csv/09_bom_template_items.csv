@@ -1,8 +1,0 @@
-template_code,sort_order,material_id,stage,mass_kg,waste_percent
-EXAMPLE_COMPOSITE,1,1,Final laminate,2.0,5
-EXAMPLE_COMPOSITE,2,4,Final laminate,1.0,3
-EXAMPLE_COMPOSITE,3,5,Assembly,0.05,2
-EXAMPLE_COMPOSITE,4,6,Consumable,0.08,20
-EXAMPLE_COMPOSITE,5,7,Consumable,0.12,15
-EXAMPLE_COMPOSITE,6,8,Finishing,0.1,20
-EXAMPLE_COMPOSITE,7,9,Packaging,0.2,0
