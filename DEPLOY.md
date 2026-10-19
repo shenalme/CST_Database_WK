@@ -36,8 +36,10 @@ Open **SQL Editor** (left menu) → **New query**. For each file below, in this 
 | 4 | `4_digital_twin.sql` | the factory-floor layout tables |
 | 5 | `5_digital_twin_sample_data.sql` | the example floor layout |
 | 6 | `6_public_read_access.sql` | **lets the hosted pages read the dashboard and twin views** (nothing else) |
+| 7 | `7_sensor_ingest.sql` | *optional*: lets a sensor or script send readings with a device token (see Part 3) |
+| 8 | `8_users_and_roles.sql` | *optional, for the team page `admin.html`*: sign-in roles (admin, editor, viewer), **Add project** and the admin dashboard (see Part 4) |
 
-Run `6` **last**. Supabase may warn that the file contains `revoke` statements: that is expected, click **Run this query**.
+Run `6` last of the website files (`7` and `8` are optional and come after it). Supabase may warn that the file contains `revoke` statements: that is expected, click **Run this query**.
 
 If you ran older versions of these files before, run `0_reset_database.sql` first (it deletes the old tables and their data), then 1 to 6.
 
@@ -109,6 +111,79 @@ In Supabase SQL Editor run `update lca_scenarios set electricity_factor = 0.1 wh
 
 ---
 
+## Part 3 — Simulate a sensor from Google Colab (optional)
+
+A script that pretends to be the energy meters on your machines and sends readings to the database. The dashboard and the twin then show them as live data. Real meters or a gateway can use the same call later.
+
+```
+ Google Colab script ──POST──▶ Supabase function ingest_reading  ──stores──▶ table sensor_readings ──▶ dashboard + twin
+   (device token)              (checks the token, nothing else can be written)
+```
+
+**1. Switch it on in Supabase**
+1. SQL Editor → run `supabase/7_sensor_ingest.sql`.
+2. Run `select create_ingest_token('colab-simulator');`. Copy the long text it returns **now**: only a scrambled copy is stored, so it cannot be shown again. (Lost it? Make another one.)
+
+**2. Open the script in Colab**
+1. Go to **colab.research.google.com**.
+2. Either **File → Upload notebook** and choose `colab/sensor_simulator.ipynb`, or open it straight from your repository: **File → Open notebook → GitHub** tab, paste your repository address, pick `colab/sensor_simulator.ipynb`.
+3. Click the **key icon** (Secrets) in the left bar and add three secrets, switching **Notebook access** on for each:
+
+| Secret name | Value |
+|---|---|
+| `SUPABASE_URL` | your Project URL |
+| `SUPABASE_ANON_KEY` | your public key |
+| `DEVICE_TOKEN` | the text from step 1 |
+
+**3. Run it**
+**Runtime → Run all.** After a few seconds it prints one line per operation (machine, sensor, design kWh, kWh sent, difference), for example the oven about 40 % above its design value. The settings cell lets you change the route (`SCENARIO_ID`), the number of runs, the speed, the noise and how far each machine runs above design.
+
+**4. See it on the website**
+- Dashboard: reload the page. The live total and the comparison table use the new readings.
+- Twin: set **Energy per operation** to **Live meter readings**. It reloads its data every 30 seconds; the pads under hot-running machines turn amber or red.
+
+**How the numbers are used.** All readings of one run share a `run_label`, and the website uses the **latest run** of each route. A new run therefore replaces the old one instead of adding to it.
+
+**What the token allows.** Only `ingest_reading`: add one energy reading. It cannot read tables, change or delete anything. Keep it in Colab Secrets, never in GitHub. To switch it off: `update ingest_tokens set active = false where label = 'colab-simulator';`. Anyone holding it can add false readings, so treat it like a password.
+
+**Real sensors later.** The same web call works from a gateway, a Raspberry Pi or any device that can send an HTTPS request:
+```bash
+curl -X POST "https://<project-ref>.supabase.co/rest/v1/rpc/ingest_reading" \
+  -H "apikey: <public key>" -H "Content-Type: application/json" \
+  -d '{"p_token":"<device token>","p_scenario_id":1,"p_route_operation_id":2,"p_sensor_code":"MTR-OVN-PPSS","p_kwh":1.2,"p_machine_state":"running","p_run_label":"B-2026-0001"}'
+```
+(If your public key is the long `eyJ…` type, also add `-H "Authorization: Bearer <public key>"`.) It answers with the id of the stored reading.
+
+**If it fails**
+| Message | Meaning |
+|---|---|
+| `invalid or inactive device token` | wrong or switched-off token: create a new one |
+| `permission denied for function ingest_reading` | file `7` was not run |
+| `operation … is not part of the route of scenario …` | the sensor was sent for an operation of another route: check `SCENARIO_ID` |
+| `sensor … belongs to another machine` | that sensor code is already registered to a different machine |
+| `Invalid API key` / 401 | wrong `SUPABASE_URL` or `SUPABASE_ANON_KEY` |
+
+Each reading is one web request (a run of the example route sends 30). That is fine for demonstrations and cycle-level data; for readings every second per machine, send them in batches (ask and I will add that).
+
+---
+
+## Part 4 — Team sign-in, adding projects and the admin dashboard (optional)
+
+`admin.html` is a team page (not linked from the public pages): sign in, **add a project** (project, first part, one scenario per route with the example bill of materials), change project status, and, for administrators, an **admin dashboard** (counts, data health, carbon by scenario, users and roles, recent activity, delete a project).
+
+1. In the SQL Editor run `8_users_and_roles.sql` (after 1 to 6; run it again after any later re-run of file 2).
+2. **Authentication → Users → Add user → Create new user**: e-mail, password, tick *Auto confirm user*. Make one for yourself and one for each team member.
+3. **Authentication → Sign In / Providers → turn OFF "Allow new users to sign up"** so nobody can register themselves.
+4. Make yourself the first administrator (SQL Editor, replace the address):
+   ```sql
+   insert into user_roles (user_id, role) select id, 'admin' from auth.users where email = 'you@example.com';
+   ```
+5. Open `…/admin.html`, sign in. On **Admin dashboard → Users and roles** give the others a role: **viewer** reads, **editor** also adds and edits projects, **admin** also manages users and deletes projects. An account with no role can sign in but sees nothing.
+
+The rules live in the database (not in the page), so the public key still cannot read your tables or call these functions. The sign-in password is sent to Supabase only; nothing is stored on GitHub.
+
+---
+
 ## Changing things later
 - **Edit a page or setting:** open the file in GitHub → pencil → **Commit changes**. The site updates in about a minute (press Ctrl+Shift+R to bypass the cache).
 - **Change the data:** edit the tables in Supabase (Table Editor or SQL). No GitHub change is needed.
@@ -117,7 +192,7 @@ In Supabase SQL Editor run `update lca_scenarios set electricity_factor = 0.1 wh
 
 ## Security: what the public can see
 - The website is public and `config.js` shows the Supabase URL and public key, so **anyone can read the ten dashboard views and three twin views** that file `6` opened. They cannot read your tables, write anything, or see saved prompts.
-- Keep **example data only** on a database wired to a public site. Before real company data goes in, either run the `UNDO` block at the bottom of `6_public_read_access.sql` and blank `config.js` (the pages then show built-in sample data), or add a login first (Supabase Auth) — ask and I will add it.
+- Keep **example data only** on a database wired to a public site. Before real company data goes in, either run the `UNDO` block at the bottom of `6_public_read_access.sql` and blank `config.js` (the pages then show built-in sample data), or keep the example data public and use Part 4 for the team's real work (roles stop signed-in strangers, but the public views in file `6` stay readable by anyone until you run its `UNDO` block).
 - Never commit passwords, the service/secret key, or Excel files with real data (`.gitignore` already blocks `.env` and Excel files).
 
 ## If something does not work

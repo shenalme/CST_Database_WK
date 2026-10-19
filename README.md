@@ -6,9 +6,11 @@ A static website (GitHub Pages) that shows the composite-panel LCA project on li
 |---|---|
 | `index.html` | the LCA comparison dashboard |
 | `twin.html` | the 3D factory digital twin |
+| `admin.html` | sign-in, **Add project** and the **Admin dashboard** (team only; needs file 8) |
 | `project.html` | the project page for stakeholders (settings in `project-config.js`, images in `assets/`) |
 | `config.js` | **the only file you must edit**: your Supabase URL and public key |
 | `supabase/` | the SQL to run once in Supabase (files `1` to `6`, in order) |
+| `colab/` | the Google Colab script that simulates sensors sending readings to the database (see `DEPLOY.md`, Part 3) |
 | `models/` | credits and settings for the 3D machine models |
 | `calc.js`, `twin-*.js`, `twin3d.bundle.js`, `sample-data.js` | the pages' code and built-in sample data (nothing to edit) |
 

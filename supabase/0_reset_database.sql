@@ -15,7 +15,11 @@ drop function if exists run_analysis(bigint, text), generate_recommendations(big
   save_comparison(bigint, text), load_example_live_data(bigint), add_live_reading(bigint, bigint, text, numeric, text),
   new_scenario(bigint, text, text, text), load_bom_template(bigint, text), add_bom_item(bigint, text, text, numeric, numeric),
   check_reading_operation(), refresh_operation_energy_comparison(bigint), reset_identity_sequences() cascade;
+drop function if exists admin_delete_project(bigint), admin_set_role(uuid, text), admin_users(), admin_overview(), set_project_status(bigint, text),
+  add_part_to_project(bigint, text, text, text, numeric, numeric, numeric, text[], text), create_project_setup(text, text, text, text, text, text, numeric, numeric, numeric, text[], text),
+  _add_part(bigint, text, text, text, numeric, numeric, numeric, text[], text), list_projects(), list_routes(), my_role(), _require_role(text[]), app_role() cascade;
 -- tables (current and earlier versions)
+drop table if exists user_roles cascade;
 drop table if exists
   machine_locations, factory_zones, factory_floors,
   ai_recommendations, recommendation_actions, ai_prompts, ai_prompt_templates, lca_comparison, lca_snapshots,

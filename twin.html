@@ -75,6 +75,7 @@ button[aria-pressed=true]{background:var(--amber);color:#111827}
       <label>Electricity factor (kg CO₂e per kWh)</label><input id="gridFactor" type="number" min="0" step="0.01" oninput="rebuild()">
       <label class="check"><input id="inclMat" type="checkbox" checked onchange="rebuild()"> Include materials in the footprint</label>
       <label class="check"><input id="fx" type="checkbox" checked onchange="frame()"> Show power flow and CO₂e puffs</label>
+      <label class="check"><input id="world" type="checkbox" checked onchange="if (T3) T3.setEnvironmentOn(this.checked)"> Show the world around the floor (HDRI)</label>
       <p class="small muted">Drag to rotate · right-drag to pan · Ctrl + scroll (or pinch) to zoom · click a machine or a part · hover for numbers.</p>
     </div>
   </div>
@@ -112,6 +113,7 @@ button[aria-pressed=true]{background:var(--amber);color:#111827}
 <script src="twin-sim.js"></script>
 <script src="twin-viz.js"></script>
 <script src="models/models-embedded.js" onerror="void 0"></script>
+<script src="models/environment-embedded.js" onerror="void 0"></script>
 <script src="twin3d.bundle.js" onerror="window.TWIN3D_FAILED=true"></script>
 <script>
 const C = window.LCA_CALC, SIM = window.TWIN_SIM, VIZ = window.TWIN_VIZ;
@@ -183,7 +185,7 @@ function rebuild3d() {
 function drawLegend() {
   const mode = $('mode').value, sw = (c, l) => h('span', {}, h('i', { style: `background:${c}` }), l), br = () => h('br');
   const ramp = (a, lo, hi) => h('span', {}, lo, h('span', { class: 'ramp', style: `background:linear-gradient(90deg,${a})` }), hi);
-  const items = { state: [sw('#34d399', 'running'), sw('#e5e7eb', 'idle')], power: [ramp('#93c5fd,#fbbf24,#dc2626', 'low kW', 'high kW')], energy: [ramp('#93c5fd,#fbbf24,#dc2626', 'low', 'high energy'), h('div', {}, 'amber towers = energy so far')],
+  const items = { state: [sw('#22c55e', 'green stack light = running'), sw('#f59e0b', 'amber = idle'), sw('#ef4444', 'red = energy well above design')], power: [ramp('#93c5fd,#fbbf24,#dc2626', 'low kW', 'high kW')], energy: [ramp('#93c5fd,#fbbf24,#dc2626', 'low', 'high energy'), h('div', {}, 'amber towers = energy so far')],
     carbon: [ramp('#e5e7eb,#1f2937', 'low', 'high carbon'), h('div', {}, 'dark towers = carbon so far')], variance: [sw('#86efac', 'OK'), sw('#fcd34d', 'watch'), sw('#fca5a5', 'high vs design')] }[mode];
   $('legend').replaceChildren(h('b', {}, 'Colour: ' + $('mode').selectedOptions[0].textContent), br(), ...items, br(),
     sw('#f59e0b', 'part waiting'), sw('#2563eb', 'in process'), sw('#16a34a', 'finished'), br(), '⚡ yellow dots = power flowing · ☁ grey puffs = CO₂e', br(), 'Pad colour = live energy vs design · stack light: green running, amber idle, red high');
