@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manufacturing LCA</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b2430; --mute:#5d6b7a; --line:#dde2e8; --acc:#0b6e4f; --acc2:#e8f3ee; --bad:#b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12171d; --card:#1a222b; --ink:#e7ecf1; --mute:#93a1b0; --line:#2b3642; --acc:#4fc29a; --acc2:#17332a; --bad:#ff8a80; } }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; display:flex; flex-direction:column; }
+  main { flex:1; width:100%; max-width:980px; margin:0 auto; padding:56px 20px 32px; }
+  .brand { color:var(--acc); font-weight:600; letter-spacing:.04em; font-size:13px; text-transform:uppercase; }
+  h1 { font-size:clamp(28px,5vw,44px); line-height:1.1; margin:8px 0 12px; }
+  .lead { color:var(--mute); max-width:560px; margin:0 0 28px; }
+  .mute { color:var(--mute); } .small { font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  label { display:block; font-size:13px; color:var(--mute); margin:12px 0 4px; }
+  input { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  input:focus { outline:2px solid var(--acc); }
+  .btn { background:var(--acc); color:#fff; border:0; padding:11px 18px; border-radius:8px; cursor:pointer; font:inherit; width:100%; margin-top:16px; transition:transform .15s, opacity .2s; }
+  .btn:hover:not(:disabled) { transform:translateY(-1px); } .btn:disabled { opacity:.6; }
+  .btn.alt { background:transparent; color:var(--acc); border:1px solid var(--acc); width:auto; margin:0; padding:6px 14px; }
+  .msg { padding:9px 12px; border-radius:8px; margin-top:12px; font-size:14px; border:1px solid var(--bad); color:var(--bad); }
+  .hide { display:none !important; }
+  .signin { max-width:400px; animation:up .5s ease both; }
+  .top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .pill { display:inline-block; padding:1px 10px; border-radius:99px; font-size:12px; background:var(--acc2); color:var(--acc); }
+  .tiles { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); margin-top:22px; }
+  .tile { display:block; text-decoration:none; color:inherit; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; transition:transform .2s, border-color .2s, box-shadow .2s; animation:up .5s ease both; }
+  .tile:hover { transform:translateY(-4px); border-color:var(--acc); box-shadow:0 8px 24px rgba(0,0,0,.08); }
+  .tile b { display:block; font-size:17px; margin-bottom:4px; } .tile span { color:var(--mute); font-size:14px; } .tile em { display:block; margin-top:10px; font-style:normal; color:var(--acc); font-size:14px; }
+  @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  footer { text-align:center; padding:18px; font-size:12px; color:var(--mute); }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">MSI LCI Optimisation Project</div>
+  <h1>Manufacturing life-cycle assessment</h1>
+  <p class="lead">Compare manufacturing routes by carbon and energy, with the factory floor as a live 3D digital twin. Team members sign in below.</p>
+
+  <section id="signin" class="card signin hide">
+    <form id="f">
+      <b>Sign in</b>
+      <label for="em">E-mail</label><input id="em" type="email" autocomplete="username" required>
+      <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" required>
+      <button class="btn" id="go" type="submit">Sign in</button>
+      <div id="err"></div>
+    </form>
+    <p class="small mute" style="margin:14px 0 0">Accounts are created by an administrator. There is no self-registration.</p>
+  </section>
+
+  <section id="setup" class="card hide"><b>Not connected yet</b><p class="mute small" style="margin:6px 0 0">Fill in <code>config.js</code> with your Supabase URL and public key (see DEPLOY.md), then reload this page.</p></section>
+
+  <section id="home" class="hide">
+    <div class="top"><span id="who"></span><button class="btn alt" id="out">Sign out</button></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+</main>
+<footer>Example data only until real, approved data is loaded.</footer>
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const cfg = window.DASHBOARD_CONFIG || {}, base = String(cfg.SUPABASE_URL || '').replace(/\/+$/, ''), $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let session = null;
+  try { session = JSON.parse(sessionStorage.getItem('lca_session') || 'null'); } catch (e) { session = null; }
+  const save = () => { try { session ? sessionStorage.setItem('lca_session', JSON.stringify(session)) : sessionStorage.removeItem('lca_session'); } catch (e) { /* private window */ } };
+  const err = (t) => { $('err').innerHTML = `<div class="msg">${esc(t)}</div>`; };
+  const hdr = () => ({ apikey: cfg.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' });
+
+  async function role() {
+    const r = await fetch(base + '/rest/v1/rpc/my_role', { method: 'POST', headers: { ...hdr(), Authorization: 'Bearer ' + session.token }, body: '{}' });
+    if (r.status === 401) throw Object.assign(new Error('Your session ended. Please sign in again.'), { expired: true });
+    if (!r.ok) throw new Error('Could not check your access (' + r.status + '). Has 8_users_and_roles.sql been run?');
+    return r.json();
+  }
+  function out(text) { session = null; save(); $('home').classList.add('hide'); $('signin').classList.remove('hide'); $('err').innerHTML = ''; if (text) err(text); }
+  async function show() {
+    let r;
+    try { r = await role(); } catch (e) { out(e.message); return; }
+    if (!r) { out('This account has no access yet. Ask an administrator to give it a role.'); return; }
+    $('signin').classList.add('hide'); $('home').classList.remove('hide');
+    $('who').innerHTML = `${esc(session.email)} <span class="pill">${esc(r)}</span>`;
+    const t = [['dashboard.html', 'Dashboard', 'Compare routes: bill of materials, energy, carbon, saved results and AI prompts.', 'Open the dashboard'],
+      ['twin.html', 'Digital twin', 'The factory floor in 3D with live energy and carbon, plus a walkable worker view.', 'Open the twin'],
+      ['project.html', 'Project page', 'The story of the project for partners and stakeholders.', 'Read the project'],
+      ['admin.html', r === 'viewer' ? 'Projects' : 'Add and manage projects', 'See every project and its scenarios' + (r === 'viewer' ? '.' : '; add a new one step by step.'), 'Open projects']];
+    if (r === 'admin') t.push(['admin.html#admin', 'Admin dashboard', 'Data health, users and roles, recent activity.', 'Open admin']);
+    $('tiles').innerHTML = t.map(([h, a, b, c], i) => `<a class="tile" href="${h}" style="animation-delay:${i * 80}ms"><b>${a}</b><span>${b}</span><em>${c} →</em></a>`).join('');
+  }
+  $('out').addEventListener('click', () => out(''));
+  $('f').addEventListener('submit', async (e) => {
+    e.preventDefault(); $('err').innerHTML = ''; $('go').disabled = true; $('go').textContent = 'Signing in…';
+    try {
+      const r = await fetch(base + '/auth/v1/token?grant_type=password', { method: 'POST', headers: hdr(), body: JSON.stringify({ email: $('em').value.trim(), password: $('pw').value }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error_description || j.msg || j.message || 'Sign-in failed');
+      session = { token: j.access_token, email: (j.user && j.user.email) || $('em').value.trim(), exp: Date.now() + (j.expires_in || 3600) * 1000 }; save(); $('pw').value = ''; await show();
+    } catch (x) { err(x.message === 'Failed to fetch' ? 'Cannot reach the database. Check config.js.' : x.message); }
+    finally { $('go').disabled = false; $('go').textContent = 'Sign in'; }
+  });
+  if (!base || !cfg.SUPABASE_ANON_KEY) $('setup').classList.remove('hide');
+  else if (session && Date.now() < session.exp) show();
+  else { session = null; $('signin').classList.remove('hide'); }
+})();
+</script>
+</body>
+</html>
